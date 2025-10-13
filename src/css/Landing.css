@@ -1,0 +1,135 @@
+/* ---------------------------------------------------------------------- */
+/* --- GLOBAL RESET --- */
+/* ---------------------------------------------------------------------- */
+html, body {
+    margin: 0; 
+    padding: 0; 
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; 
+    font-family: Arial, sans-serif;
+}
+
+/* --- 1. FULL PAGE WRAPPER (Centers the card) --- */
+.landing-page-wrapper {
+    /* Set page background to your desired color */
+    background-color:white; /* Dusty Teal/Seafoam Blue-Green */
+    
+    /* Forces the wrapper to take the entire screen */
+    min-height: 100vh;
+    width: 100vw; 
+    
+    /* KEY CHANGE: Flexbox centers the card horizontally and vertically */
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    padding: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* --- 2. SPLIT CONTAINER CARD (The Centered Box) --- */
+/* ---------------------------------------------------------------------- */
+.landing-container-split {
+    display: flex; 
+    
+    /* KEY CHANGE: Set fixed maximum size for the card */
+    max-width: 1600px; 
+    width: 90%; 
+    min-height: 600px; 
+    
+    /* Box styling */
+    background-color: #ffffff; /* Default background for safety */
+    border-radius: 15px; 
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); 
+    overflow: hidden; /* CRITICAL: Ensures content respects the rounded corners */
+}
+
+/* --- LEFT COLUMN: Content Panel (Welcome Box) --- */
+.content-panel {
+    /* 50%/50% Split */
+    flex: 0 0 30%; 
+    
+    background-color: #ffffff; 
+    padding: 40px 60px;
+    border-right: 1px solid #C0D6D9; /* Soft divider line */
+    
+    /* Center content vertically within its half */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* --- RIGHT COLUMN: Image Panel --- */
+.image-panel {
+    /* 50%/50% Split */
+    flex: 0 0 70%; 
+    
+    /* Ensures the image is clipped correctly */
+    overflow: hidden; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* This background only shows if the image doesn't load */
+    background-color: #e0f2f7; 
+}
+
+/* --- Image Styling --- */
+.split-image {
+    /* Image fills its 50% panel exactly */
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+    object-position: center; 
+    display: block;
+}
+
+/* ---------------------------------------------------------------------- */
+/* --- 3. TEXT & BUTTON STYLES (Aesthetic color scheme) --- */
+/* ---------------------------------------------------------------------- */
+.content-panel h1 {
+    font-size: 2.5em; 
+    color: #3B6B70; /* Dark Teal */
+    margin-bottom: 0.5em;
+    font-weight: 700;
+}
+
+.content-panel p {
+    font-size: 1.1em; 
+    color: #4A4A4A; 
+    margin-bottom: 2.5em; 
+}
+
+.landing-buttons {
+    display: flex;
+    justify-content: center; 
+    gap: 25px; 
+}
+
+.landing-buttons button {
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.landing-buttons button:first-child {
+    background-color: #3B6B70; /* Dark Teal Primary Button */
+    color: white;
+}
+
+.landing-buttons button:last-child {
+    background-color: #ffffff; 
+    color: #3B6B70;
+    border: 2px solid #3B6B70; 
+}
+
+.landing-buttons button:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api/api";
+import "../css/Signup.css";
 
 function signup() {
   const [form, setForm] = useState({
@@ -25,48 +26,50 @@ function signup() {
   };
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+    <div className="signup-page-wrapper">
+      <div className="signup-card">
+        <h2>Sign Up</h2>
+        {message && <p>{message}</p>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
 
-        {/* 🔹 Role field */}
-        <select
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          required
-        >
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
+          {/* Role dropdown */}
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
 
-        <button type="submit">Register</button>
-      </form>
+          <button type="submit">Register</button>
+        </form>
+      </div>
     </div>
   );
 }

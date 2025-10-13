@@ -1,0 +1,120 @@
+/* --- Root Variables for Theme --- */
+:root {
+  --primary-blue: #5d8fd4; /* Use your Landing Page Blue */
+  --light-blue: #8fa0e0;
+  --white: #ffffff;
+  --text-color: #333;
+  --input-bg: #eee;
+  --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------------------------------------- */
+/* --- 1. FULL PAGE WRAPPER (Centers the card) --- */
+/* ---------------------------------------------------------------------- */
+.signup-page-wrapper {
+    /* Page background */
+    background-color: #f4f4f9; 
+    
+    /* Forces the wrapper to take the entire screen */
+    min-height: 100vh;
+    width: 100vw; 
+    
+    /* Flexbox centers the card horizontally and vertically */
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* ---------------------------------------------------------------------- */
+/* --- 2. SIGNUP CARD (The Centered Box) --- */
+/* ---------------------------------------------------------------------- */
+.signup-card {
+    background-color: var(--white);
+    max-width: 400px; /* Set a narrow width for a classic form look */
+    width: 90%; 
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+}
+
+.signup-card h2 {
+    color: var(--primary-blue);
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* Status Message Styling */
+.signup-card p {
+    color: var(--primary-blue);
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* --- 3. FORM ELEMENTS --- */
+/* ---------------------------------------------------------------------- */
+.signup-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between all form elements */
+    width: 100%;
+}
+
+/* Styling for both input and select elements */
+.signup-card input,
+.signup-card select { 
+    background-color: var(--input-bg);
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    width: 100%;
+    border-radius: 5px;
+    color: var(--text-color);
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    font-size: 1em;
+}
+
+/* Select/Dropdown specific styling */
+.signup-card select {
+    appearance: none; /* Remove default select styling */
+    cursor: pointer;
+    /* Custom arrow for select (optional but nice) */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4"><path fill="%23888" d="M287 69a12 12 0 00-17 0L146 193 23 69a12 12 0 00-17 17l131 131a12 12 0 0017 0l131-131a12 12 0 000-17z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 0.65em;
+}
+
+/* Focus effect */
+.signup-card input:focus,
+.signup-card select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(93, 143, 212, 0.2);
+}
+
+/* Submit Button Styling */
+.signup-card button[type="submit"] {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.signup-card button[type="submit"]:hover {
+    background-color: #4b7bc9; /* Slightly darker blue on hover */
+}
+
+.signup-card button[type="submit"]:active {
+    transform: scale(0.99);
+}

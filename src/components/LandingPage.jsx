@@ -1,14 +1,38 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "../css/Landing.css";
+// NOTE: Make sure the path to your image is correct!
+import landingImage from '../assets/LandingImage.png'; 
 
-export default function LandingPage() {
+function Landing() {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <h1>Welcome to Our App 🚀</h1>
-      <p>This is the landing page of your Laravel + React project.</p>
+    <div className="landing-page-wrapper">
+      
+      <div className="landing-container-split">
+        
+        {/* LEFT COLUMN: The White Content Box */}
+        <div className="content-panel">
+          <h1>Welcome to our page!</h1>
+          <p>Creativity delivered to your doorstep ✨📦</p>
+          <div className="landing-buttons">
+            <button onClick={() => navigate("/signup")}>Signup</button>
+            <button onClick={() => navigate("/login")}>Login</button>
+          </div>
+        </div>
 
-      <Link to="/signup">Sign Up</Link>
-      <br />
-      <Link to="/login">Login</Link>
+        {/* RIGHT COLUMN: The Image Panel */}
+        <div className="image-panel">
+          <img 
+            src={landingImage} 
+            alt="Creativity and Flowers" 
+            className="split-image" 
+          />
+        </div>
+
+      </div>
     </div>
   );
 }
+
+export default Landing;
