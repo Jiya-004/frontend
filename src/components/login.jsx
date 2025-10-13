@@ -16,18 +16,24 @@ export default function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", form);
-      setMessage(res.data.message);
-      console.log(res.data.user);
-      // Optional: Redirect upon successful login
-      // navigate("/dashboard"); 
-    } catch (error) {
-      setMessage("Invalid email or password");
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post("http://127.0.0.1:8000/api/login", form);
+    setMessage(res.data.message);
+    console.log(res.data.user);
+
+    // Save user info to localStorage so we can use it later
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    // ✅ Redirect to home after login
+    navigate("/home");
+
+  } catch (error) {
+    setMessage("Invalid email or password");
+  }
+};
+
 
   return (
     // Wrapper for centering the card
