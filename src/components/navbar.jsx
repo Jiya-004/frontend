@@ -1,32 +1,34 @@
 import React, { useState } from "react";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
-import "../css/Navbar.css"; // ✅ Import the CSS file here
+import { Link } from "react-router-dom"; // ✅ Import Link
+import "../css/Navbar.css";
+import Products from "../Pages/product";
 
 export default function Navbar({ onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo */}
-        <div className="navbar-logo">Shreemcraft</div>
+        <div className="navbar-logo">
+          <Link to="/">Shopify</Link>
+        </div>
 
         {/* Desktop Menu */}
         <div className={`navbar-links ${isOpen ? "active" : ""}`}>
-          <a href="#" className="nav-link">Home</a>
-          <a href="#" className="nav-link">Products</a>
-          <a href="#" className="nav-link">About</a>
-          <a href="#" className="nav-link">Contact</a>
-          <button onClick={onLogout} className="logout-btn">Logout</button>
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/products" className="nav-link">Products</Link>
+          <Link to="/about" className="nav-link">About</Link>
+          <Link to="/contact" className="nav-link">Contact</Link>
+          <Link to="/login" className="logout-btn">Login</Link>
         </div>
 
         {/* Icons & Menu Toggle */}
         <div className="navbar-icons">
           <div className="icon-wrapper">
             <ShoppingCart size={22} />
-            <span className="cart-badge"></span>
           </div>
 
           <div className="icon-wrapper">

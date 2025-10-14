@@ -1,16 +1,18 @@
+import React from "react";
 import { BsCart2 } from "react-icons/bs";
-function Card(props){
-    return(
-        <div className="Container">
-        <img src={props.image}></img>
-        <h3>{props.title}</h3>
-        <p>{props.description}</p>
-        <h4>{props.price}</h4>
-        <button ><BsCart2/>Add to cart</button>
-        </div>
+import "../css/Card.css"; // ✅ Create this file for styling
 
-        
-    );
-
+export default function Card({ title, image, price }) {
+  return (
+    <div className="card">
+      <img src={image} alt={title} className="card-image" />
+      <div className="card-body">
+        <h3 className="card-title">{title}</h3>
+        <p className="card-price">Rs. {price}</p>
+        <button className="card-btn">
+          <BsCart2 size={18} style={{ marginRight: "6px" }} /> Add to Cart
+        </button>
+      </div>
+    </div>
+  );
 }
-export default Card;
