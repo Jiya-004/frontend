@@ -12,7 +12,7 @@ function Landing() {
         
         {/* LEFT COLUMN: The White Content Box */}
         <div className="content-panel">
-          <h1>Welcome to our page!</h1>
+          <h1> Welcome✨🌸💖</h1>
   
            <p>Please Sign Up to Continue to our exclusive gallery and start customizing your exquisite resin art decor. ✨📦</p>
                
