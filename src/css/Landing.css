@@ -6,7 +6,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px; /* Provides some space around the main content area */
+  padding-top: 0;
+  padding: 0 20px 20px 20px;  /* Provides some space around the main content area */
 }
 
 /* 2. Main Container for the Split Layout - NOW SEAMLESS (No Card) */

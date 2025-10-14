@@ -11,7 +11,7 @@ export default function Navbar({ onLogout }) {
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo */}
-        <div className="navbar-logo">MyShop</div>
+        <div className="navbar-logo">Shreemcraft</div>
 
         {/* Desktop Menu */}
         <div className={`navbar-links ${isOpen ? "active" : ""}`}>
