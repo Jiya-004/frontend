@@ -1,0 +1,23 @@
+.products-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;                 /* space between cards */
+  justify-content: center;
+  padding: 20px;             /* reduced padding */
+  background-color: #E6E6FA;
+  min-height: 100vh;
+}
+
+.products-container h2 {
+  width: 100%;
+  text-align: center;
+  
+  /* 👇 FIX 1: Set top margin to 0 to prevent the default heading margin */
+  margin-top: 0; 
+  
+  /* FIX 2: Re-establish the bottom margin to separate the heading from the cards */
+  margin-bottom: 10px; /* smaller gap between heading and cards, as you intended */
+  
+  font-size: 2rem;
+  color: #52465D; /* Assuming you are using the Luxurious & Elegant color */
+}
