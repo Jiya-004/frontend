@@ -1,10 +1,12 @@
-import LandingPage from "./components/LandingPage";
-import SignUp from "./components/signup";
-import Login from "./components/login";
+import LandingPage from "./Pages/LandingPage";
+import SignUp from "./Pages/signup";
+import Login from "./Pages/login";
+import navbar from "./components/navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
  
+
 
 function App() {
   return (
