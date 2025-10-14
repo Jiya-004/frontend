@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import "../css/Landing.css";
-// NOTE: Make sure the path to your image is correct!
 import landingImage from '../assets/LandingImage.png'; 
 
 function Landing() {
@@ -14,7 +13,9 @@ function Landing() {
         {/* LEFT COLUMN: The White Content Box */}
         <div className="content-panel">
           <h1>Welcome to our page!</h1>
-          <p>Creativity delivered to your doorstep ✨📦</p>
+  
+           <p>Please Sign Up to Continue to our exclusive gallery and start customizing your exquisite resin art decor. ✨📦</p>
+               
           <div className="landing-buttons">
             <button onClick={() => navigate("/signup")}>Signup</button>
             <button onClick={() => navigate("/login")}>Login</button>
