@@ -6,11 +6,14 @@ import Login from "./Pages/login";
 import Home from "./components/Home";
 import Contact from "./Pages/contact";
 import About from "./Pages/About";
+import { CartProvider } from "./components/Cartcomponent";
+import CartPage from "./Pages/CartPage";
 
 import Products from "./Pages/product";  
 
 function App() {
   return (
+    <CartProvider>
     <Router>
       <Navbar />
 
@@ -22,9 +25,11 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/about" element={<About/>}/>
+        <Route path="/cart" element={<CartPage />} />
           {/* ✅ Added */}
       </Routes>
     </Router>
+    </CartProvider>
   );
 }
 
