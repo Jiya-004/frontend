@@ -38,9 +38,6 @@
 }
 
 
-
-
-
 /* ======================================= */
 /* HERO SECTION */
 /* ======================================= */
@@ -53,7 +50,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5rem 1rem;
+    padding: 0;
     color: white; /* Default text color is white for contrast */
     height: 60vh;
 }
@@ -64,9 +61,12 @@
 }
 
 .hero-subtitle {
-    font-size: 1.125rem; /* text-lg */
+    /* --- MODIFICATION: INCREASED FONT SIZE (was 1.5rem) --- */
+    font-size: 1.75rem; 
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    /* --- MODIFICATION: REDUCED GAP (was 2rem) --- */
+    margin-bottom: 0.5rem; 
+    margin-top: 0rem;
     letter-spacing: 0.1em;
     color: var(--color-primary);
 }
@@ -74,15 +74,17 @@
 .hero-title {
     font-size: 3.75rem; /* text-6xl */
     font-weight: 300;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
     letter-spacing: 0.05em;
-     /* Override to dark text for contrast on lighter image */
+    /* Override to dark text for contrast on lighter image */
 }
 
 .hero-description {
     font-size: 1.25rem; /* text-xl */
     font-weight: 300;
     margin-bottom: 2.5rem;
+    margin-top: 6rem;
     color: var(--color-gray-text);
 }
 
