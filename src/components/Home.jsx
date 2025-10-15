@@ -1,19 +1,28 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css"; // keep your existing CSS
+import "../css/Home.css"; // Keep your existing CSS
+import { useCart } from "../components/Cartcomponent"; // Import Cart context
 
 export default function Home() {
   const [user, setUser] = useState({ name: "" });
+  const { addToCart } = useCart(); // Pull addToCart function from context
 
   useEffect(() => {
-    // Simulate fetching from localStorage or backend response
+    // Simulate fetching user from localStorage or backend
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser && storedUser.name) {
       setUser(storedUser);
     } else {
-      // fallback if no user found
       setUser({ name: "Guest" });
     }
   }, []);
+
+  // Dummy product data for Popular Products section
+  const products = [
+    { id: 1, name: "Resin Dish #1", price: 1200, image: "https://via.placeholder.com/150" },
+    { id: 2, name: "Resin Dish #2", price: 1200, image: "https://via.placeholder.com/150" },
+    { id: 3, name: "Resin Dish #3", price: 1200, image: "https://via.placeholder.com/150" },
+    { id: 4, name: "Resin Dish #4", price: 1200, image: "https://via.placeholder.com/150" },
+  ];
 
   return (
     <div className="shreemcraft-container">
@@ -22,16 +31,12 @@ export default function Home() {
         <div className="hero-text-container">
           <h2 className="hero-subtitle">Curated Handmade Goods</h2>
           <h1 className="hero-title">Elegance in Craft</h1>
-          <p className="hero-description">
-            Find unique crafts that transform your space.
-          </p>
+          <p className="hero-description">Find unique crafts that transform your space.</p>
           <button className="explore-button">EXPLORE COLLECTIONS</button>
 
           {/* DYNAMIC USER NAME */}
           <div className="welcome-message-wrapper">
-            <span className="welcome-message">
-              Welcome back, {user.name} 👋
-            </span>
+            <span className="welcome-message">Welcome back, {user.name} 👋</span>
           </div>
         </div>
       </section>
@@ -46,8 +51,7 @@ export default function Home() {
             <div className="service-icon">🚚</div>
             <h4 className="service-title">Fast Global Shipping</h4>
             <p className="service-description">
-              Get your handmade goods delivered quickly and reliably to any
-              location worldwide.
+              Get your handmade goods delivered quickly and reliably to any location worldwide.
             </p>
             <button className="service-button">DISCOVER</button>
           </div>
@@ -56,8 +60,7 @@ export default function Home() {
             <div className="service-icon">🎁</div>
             <h4 className="service-title">Customized Gifting</h4>
             <p className="service-description">
-              Personalize your products with custom engravings and luxurious gift
-              wrapping options.
+              Personalize your products with custom engravings and luxurious gift wrapping options.
             </p>
             <button className="service-button">DISCOVER</button>
           </div>
@@ -66,8 +69,7 @@ export default function Home() {
             <div className="service-icon">🛍️</div>
             <h4 className="service-title">Local Pick-up Available</h4>
             <p className="service-description">
-              If you are near our main studio, you can arrange a complimentary
-              local pick-up to save on shipping.
+              If you are near our main studio, you can arrange a complimentary local pick-up to save on shipping.
             </p>
             <button className="service-button">DISCOVER</button>
           </div>
@@ -81,9 +83,7 @@ export default function Home() {
             <h3 className="gift-subtitle">SPECIAL EDITION</h3>
             <h2 className="gift-title">Gift Ideas That Last Longer</h2>
             <p className="gift-description">
-              Little reminders make someone's day brighter. Our curated craft
-              collection makes perfect gifts that bring joy long after traditional
-              store-bought items would fade.
+              Little reminders make someone's day brighter. Our curated craft collection makes perfect gifts that bring joy long after traditional store-bought items would fade.
             </p>
             <button className="gift-button">SHOP GIFTS →</button>
           </div>
@@ -98,13 +98,21 @@ export default function Home() {
         <h2 className="section-title product-section-title">See What's Popular</h2>
 
         <div className="products-grid">
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="product-card">
-              <div className="product-image-placeholder">✨</div>
+          {products.map((item) => (
+            <div key={item.id} className="product-card">
+              <img src={item.image} alt={item.name} className="product-image" />
               <div className="product-details">
-                <h4 className="product-name">Resin Dish #{item}</h4>
-                <p className="product-price">Rs. 1200</p>
-                <button className="add-to-cart-button">Add to Cart</button>
+                <h4 className="product-name">{item.name}</h4>
+                <p className="product-price">Rs. {item.price}</p>
+                <button
+                  className="add-to-cart-button"
+                  onClick={() => {
+                    addToCart(item); // Add item to cart
+                    
+                  }}
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
           ))}
@@ -116,8 +124,7 @@ export default function Home() {
         <div className="contact-circle">
           <h3 className="contact-title">Talk To Our Staff</h3>
           <p className="contact-description">
-            Trouble choosing your product? We are happy to provide expert advice
-            and customized options.
+            Trouble choosing your product? We are happy to provide expert advice and customized options.
           </p>
           <button className="contact-button">LET'S TALK</button>
         </div>
@@ -129,14 +136,8 @@ export default function Home() {
           <div className="footer-grid">
             <div className="footer-col footer-col-logo">
               <h4 className="footer-logo">Shreemcraft</h4>
-              <p className="footer-tagline">
-                Custom handmade goods that inspire.
-              </p>
-              <input
-                type="email"
-                placeholder="Email Address"
-                className="newsletter-input"
-              />
+              <p className="footer-tagline">Custom handmade goods that inspire.</p>
+              <input type="email" placeholder="Email Address" className="newsletter-input" />
               <button className="newsletter-button">SUBSCRIBE</button>
             </div>
 
