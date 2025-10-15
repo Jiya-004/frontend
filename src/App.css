@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Import Custom Theme Styles */
+@import url('./shreemcraft_home.css'); 
