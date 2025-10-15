@@ -17,7 +17,7 @@ export default function Navbar({ onLogout }) {
         </div>
 
         <div className={`navbar-links ${isOpen ? "active" : ""}`}>
-          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/home" className="nav-link">Home</Link>
           <Link to="/products" className="nav-link">Products</Link>
           <Link to="/about" className="nav-link">About</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
@@ -35,7 +35,9 @@ export default function Navbar({ onLogout }) {
           </div>
 
           <div className="icon-wrapper">
+            <Link to="/account" className="account-link" aria-label="My Account" >
             <User size={22} />
+            </Link>
           </div>
 
           <button className="menu-toggle" onClick={toggleMenu}>

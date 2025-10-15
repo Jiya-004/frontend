@@ -9,7 +9,8 @@ import About from "./Pages/About";
 import { CartProvider } from "./components/Cartcomponent";
 import CartPage from "./Pages/CartPage";
 
-import Products from "./Pages/product";  
+import Products from "./Pages/product"; 
+import Account from "./Pages/account"; // ✅ Added
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/about" element={<About/>}/>
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/account" element={<Account />} />
           {/* ✅ Added */}
       </Routes>
     </Router>
