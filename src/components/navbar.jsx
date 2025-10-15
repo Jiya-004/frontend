@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link,NavLink} from "react-router-dom";
 import "../css/Navbar.css";
 import { useCart } from "../components/Cartcomponent"; // 👈 import
 
@@ -17,11 +17,11 @@ export default function Navbar({ onLogout }) {
         </div>
 
         <div className={`navbar-links ${isOpen ? "active" : ""}`}>
-          <Link to="/home" className="nav-link">Home</Link>
-          <Link to="/products" className="nav-link">Products</Link>
-          <Link to="/about" className="nav-link">About</Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
-          <Link to="/login" className="logout-btn">Login</Link>
+          <NavLink to="/home" className="nav-link">Home</NavLink>
+          <NavLink to="/products" className="nav-link">Products</NavLink>
+          <NavLink to="/about" className="nav-link">About</NavLink>
+          <NavLink to="/contact" className="nav-link">Contact</NavLink>
+          <NavLink to="/login" className="logout-btn">Login</NavLink>
         </div>
 
         <div className="navbar-icons">
