@@ -7,7 +7,7 @@ export default function Products() {
   const products = [
     { id: 1, title: "Handmade Pot", image: thali1, price: 1200 },
     { id: 2, title: "Wooden Frame", image: thali1, price: 900 },
-    { id: 3, title: "Artistic Vase", image: thali, price: 1500 },
+    { id: 3, title: "Artistic Vase", image: thali1, price: 1500 },
   ];
 
   return (
