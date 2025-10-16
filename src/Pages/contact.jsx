@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Twitter, Facebook, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Twitter, Facebook, Instagram, Send } from 'lucide-react';
 
-// Define the component using the project's aesthetic: 
-// Background: #E6E6FA (Light Lavender)
-// Text/Main: #4B0082 (Dark Purple/Indigo)
-// Accent/Button: #C71585 (Deep Magenta)
-
-const contact = () => {
+const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: '',
   });
-  const [status, setStatus] = useState('');
+  // status: 'idle', 'sending', 'success', 'error'
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,42 +17,76 @@ const contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('Sending...');
+    setStatus('sending');
+    setMessage('Sending message...');
 
-    // Mock API call simulation
+    // ⚠️ IMPORTANT: Replace with your actual Laravel API endpoint
+    // Assuming Laravel is running on port 8000
+    const apiUrl = 'http://localhost:8080/api/contact';
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); 
-      console.log('Form Submitted:', formData);
-      setStatus('Message sent successfully!');
-      setFormData({ name: '', email: '', message: '' }); // Clear form
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // If you have CORS issues, ensure your Laravel backend handles them correctly
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setMessage('Message sent successfully! Your message has been saved in the database.');
+        setFormData({ name: '', email: '', message: '' }); // Clear form
+      } else {
+        // Handle server-side validation or other errors
+        const errorData = await response.json();
+        setStatus('error');
+        setMessage(`Failed to send message: ${errorData.message || 'Server returned an error.'}`);
+      }
     } catch (error) {
+      // Handle network errors (CORS, server offline, etc.)
+      setStatus('error');
+      setMessage('A network error occurred. Please ensure your Laravel server is running and CORS is configured.');
       console.error('Submission Error:', error);
-      setStatus('Failed to send message. Please try again later.');
     }
+    
+    // Auto-clear the success/error message after 5 seconds
+    setTimeout(() => {
+        setMessage('');
+        setStatus('idle');
+    }, 5000);
   };
+
+  const buttonDisabled = status === 'sending';
+  const isSuccess = status === 'success';
+  const isError = status === 'error';
+  const isIdle = status === 'idle';
 
   return (
     <div className="contact-container">
+      {/* Inline Styles (Tailwind equivalent classes converted to pure CSS) */}
       <style jsx="true">{`
         .contact-container {
           min-height: 100vh;
           background-color: #E6E6FA; /* Light Lavender */
-          padding: 1.5rem; /* p-6 */
+          padding: 1.5rem; 
           display: flex;
           align-items: center;
           justify-content: center;
+          font-family: 'Inter', sans-serif;
         }
         @media (min-width: 640px) {
           .contact-container {
-            padding: 2.5rem; /* sm:p-10 */
+            padding: 2.5rem;
           }
         }
         .main-card {
           background-color: white;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-2xl */
-          border-radius: 1rem; /* rounded-2xl */
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          border-radius: 1rem;
           width: 100%;
-          max-width: 80rem; /* max-w-6xl */
+          max-width: 80rem;
           overflow: hidden;
         }
         .grid-layout {
@@ -64,109 +95,146 @@ const contact = () => {
         }
         @media (min-width: 1024px) {
           .grid-layout {
-            grid-template-columns: repeat(2, 1fr); /* lg:grid-cols-2 */
+            grid-template-columns: repeat(2, 1fr);
           }
         }
         .form-section {
-          padding: 3rem; /* p-12 */
+          padding: 3rem;
         }
         .form-heading {
-          font-size: 2.25rem; /* text-4xl */
-          font-weight: 800; /* font-extrabold */
-          margin-bottom: 1rem; /* mb-4 */
+          font-size: 2.25rem;
+          font-weight: 800;
+          margin-bottom: 1rem;
           color: #4B0082; /* Dark Purple/Indigo */
-          letter-spacing: -0.025em; /* tracking-tight */
+          letter-spacing: -0.025em;
         }
         .form-paragraph {
-          margin-bottom: 2rem; /* mb-8 */
-          color: #4B0082; /* indigo-700 equivalent for context */
+          margin-bottom: 2rem;
+          color: #4B0082;
         }
         .form-label {
           display: block;
-          font-size: 0.875rem; /* text-sm */
-          font-weight: 500; /* font-medium */
-          margin-bottom: 0.25rem; /* mb-1 */
-          color: #4B0082; /* Dark Purple/Indigo */
+          font-size: 0.875rem;
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+          color: #4B0082;
         }
         .form-input, .form-textarea {
           width: 100%;
-          padding: 0.75rem; /* p-3 */
-          margin-bottom: 1rem; /* mb-4 */
-          border: 1px solid #C7BFFB; /* border-indigo-300 */
-          border-radius: 0.5rem; /* rounded-lg */
+          padding: 0.75rem;
+          margin-bottom: 1rem;
+          border: 1px solid #C7BFFB;
+          border-radius: 0.5rem;
           color: #4B0082;
           transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-          placeholder-color: #6C7BB8; /* placeholder-indigo-400 equivalent */
+          box-sizing: border-box; /* Important for padding/width calculation */
+        }
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #9C95D4;
         }
         .form-input:focus, .form-textarea:focus {
-          border-color: #C71585; /* focus:border-[#C71585] */
-          box-shadow: 0 0 0 4px rgba(199, 21, 133, 0.2); /* focus:ring-4 & focus:ring-opacity-50 */
+          border-color: #C71585; 
+          box-shadow: 0 0 0 4px rgba(199, 21, 133, 0.2);
           outline: none;
         }
+        .status-message {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: ${message ? 1 : 0};
+            transition: opacity 0.3s ease-in-out;
+        }
+        .status-message.success {
+            background-color: #E9FCEF; /* Light Green */
+            color: #1E8449; /* Dark Green */
+            border: 1px solid #A9DFBF;
+        }
+        .status-message.error {
+            background-color: #FAEAEA; /* Light Red */
+            color: #943126; /* Dark Red */
+            border: 1px solid #F0A0A0;
+        }
+        .status-message.sending {
+            background-color: #FEF9E7; /* Light Yellow */
+            color: #D68910; /* Dark Yellow */
+            border: 1px solid #F7DC6F;
+        }
+
         .submit-button {
           width: 100%;
-          padding: 0.75rem; /* py-3 */
-          margin-top: 0.5rem; /* mt-2 */
-          font-size: 1.125rem; /* text-lg */
-          font-weight: 600; /* font-semibold */
+          padding: 0.75rem;
+          margin-top: 0.5rem;
+          font-size: 1.125rem;
+          font-weight: 600;
           color: white;
           background-color: #C71585; /* Deep Magenta */
-          border-radius: 0.5rem; /* rounded-lg */
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-lg */
+          border-radius: 0.5rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
           transition: background-color 0.2s ease-in-out;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .submit-button:hover {
-          background-color: #B80F74; /* Darker Pink/hover:bg-pink-700 equivalent */
+        .submit-button:hover:not(:disabled) {
+          background-color: #B80F74;
         }
         .submit-button:focus {
           outline: none;
-          box-shadow: 0 0 0 4px rgba(199, 21, 133, 0.5); /* focus:ring-4 focus:ring-[#C71585] focus:ring-opacity-50 */
+          box-shadow: 0 0 0 4px rgba(199, 21, 133, 0.5);
         }
         .submit-button:disabled {
-          opacity: 0.5;
+          opacity: 0.7;
+          background-color: #D36C9C; /* Slightly lighter pink when disabled */
           cursor: not-allowed;
         }
         .info-section {
-          padding: 3rem; /* p-12 */
-          background-color: #F8F7FF; /* bg-indigo-50/50 equivalent */
+          padding: 3rem;
+          background-color: #F8F7FF;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
         .info-heading {
-          font-size: 1.875rem; /* text-3xl */
-          font-weight: 700; /* font-bold */
-          margin-bottom: 1.5rem; /* mb-6 */
-          color: #4B0082; /* Dark Purple/Indigo */
+          font-size: 1.875rem;
+          font-weight: 700;
+          margin-bottom: 1.5rem;
+          color: #4B0082;
         }
         .info-detail {
           display: flex;
           align-items: flex-start;
+          margin-bottom: 1.5rem;
+        }
+        .info-detail p {
+             margin-top: 0.25rem;
         }
         .info-icon {
-          width: 1.5rem; /* w-6 */
-          height: 1.5rem; /* h-6 */
-          margin-right: 0.75rem; /* mr-3 */
+          width: 1.5rem;
+          height: 1.5rem;
+          margin-right: 0.75rem;
           color: #C71585; /* Deep Magenta */
           flex-shrink: 0;
-          margin-top: 0.25rem; /* mt-1 */
+          margin-top: 0.25rem;
         }
         .info-detail h3 {
-          font-weight: 600; /* font-semibold */
+          font-weight: 600;
           color: #4B0082;
         }
         .social-links {
-          margin-top: 2.5rem; /* mt-10 */
-          padding-top: 1.5rem; /* pt-6 */
-          border-top: 1px solid #E0E7FF; /* border-t border-indigo-200 */
+          margin-top: 2.5rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid #E0E7FF;
         }
         .social-icon {
-            color: #4f46e5; /* text-indigo-600 */
-            transition: color 0.15s;
+          color: #4B0082; 
+          transition: color 0.15s;
         }
         .social-icon:hover {
-            color: #C71585; /* hover:text-[#C71585] */
+          color: #C71585;
         }
       `}</style>
       <div className="main-card">
@@ -225,21 +293,33 @@ const contact = () => {
                 ></textarea>
               </div>
 
-              {status && (
-                <div className={`p-3 mb-4 rounded-lg text-sm ${
-                  status.includes('success') ? 'bg-green-100 text-green-700' : 
-                  status.includes('failed') ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                }`}>
-                  {status}
+              {/* Status Message Display */}
+              {message && (
+                <div className={`status-message ${status}`}>
+                  {isSuccess && <span>&#10003; </span>}
+                  {isError && <span>&#10007; </span>}
+                  {message}
                 </div>
               )}
 
               <button
                 type="submit"
                 className="submit-button"
-                disabled={status === 'Sending...'}
+                disabled={buttonDisabled}
               >
-                Send Message
+                {status === 'sending' ? (
+                    <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                    </span>
+                ) : (
+                    <span className="flex items-center">
+                        <Send className="w-5 h-5 mr-2" /> Send Message
+                    </span>
+                )}
               </button>
             </form>
           </div>
@@ -250,7 +330,7 @@ const contact = () => {
               Our Details
             </h2>
             
-            <div className="space-y-6 text-indigo-800">
+            <div className="text-[#4B0082]">
               <div className="info-detail">
                 <Mail className="info-icon" />
                 <div>
@@ -263,7 +343,7 @@ const contact = () => {
                 <Phone className="info-icon" />
                 <div>
                   <h3 className="font-semibold text-[#4B0082]">Phone</h3>
-                  <p>+91 98765 43210 (Mon - Fri, 10am - 6pm IST)</p>
+                  <p>+9765975446 (Mon - Fri, 10am - 6pm IST)</p>
                 </div>
               </div>
 
@@ -272,7 +352,7 @@ const contact = () => {
                 <div>
                   <h3 className="font-semibold text-[#4B0082]">Studio Location</h3>
                   <p>
-                    123 Resin Lane, Craft District, Mumbai, India.
+                    Kathmandu,Nepal
                   </p>
                 </div>
               </div>
@@ -281,9 +361,9 @@ const contact = () => {
             <div className="social-links">
                 <h3 className="font-semibold text-[#4B0082] mb-4">Follow Us</h3>
                 <div className="flex space-x-4">
-                    <a href="#" className="social-icon"><Facebook className="w-6 h-6" /></a>
-                    <a href="#" className="social-icon"><Instagram className="w-6 h-6" /></a>
-                    <a href="#" className="social-icon"><Twitter className="w-6 h-6" /></a>
+                  <a href="#" aria-label="Facebook" className="social-icon"><Facebook className="w-6 h-6" /></a>
+                  <a href="#" aria-label="Instagram" className="social-icon"><Instagram className="w-6 h-6" /></a>
+                  <a href="#" aria-label="Twitter" className="social-icon"><Twitter className="w-6 h-6" /></a>
                 </div>
             </div>
           </div>
@@ -293,4 +373,4 @@ const contact = () => {
   );
 };
 
-export default contact;
+export default Contact;
