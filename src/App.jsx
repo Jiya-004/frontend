@@ -13,54 +13,106 @@ import Products from "./Pages/product";
 import Account from "./Pages/account";
 import Admindashboard from "./admin/dashboard";
 import Product from "./admin/product";
-import Sidebar from "./admin/Sidebar";
 import Inventory from "./admin/Inventory";
+import Sidebar from "./admin/Sidebar";
 import "./axiosConfig";
+
+// --- Layout wrappers ---
+const AdminLayout = ({ children, isCollapsed, toggleSidebar }) => (
+  <div style={{ display: "flex", minHeight: "100vh" }}>
+    <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+    <div
+      style={{
+        flex: 1,
+        padding: "20px",
+        marginLeft: !isCollapsed ? "250px" : "80px",
+        transition: "margin-left 0.3s ease",
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);
+
+const UserLayout = ({ children }) => (
+  <div>
+    <Navbar />
+    <div style={{ paddingTop: "20px" }}>{children}</div>
+  </div>
+);
 
 function AppContent() {
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false); // ✅ moved here
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
-    <div className="app-layout" style={{ display: "flex", minHeight: "100vh" }}>
-      {/* --- Show Navbar only for non-admin pages --- */}
-      {!isAdminPage && <Navbar />}
+    <Routes>
+      {/* --- User routes --- */}
+      <Route
+        path="/"
+        element={<UserLayout><LandingPage /></UserLayout>}
+      />
+      <Route
+        path="/signup"
+        element={<UserLayout><SignUp /></UserLayout>}
+      />
+      <Route
+        path="/login"
+        element={<UserLayout><Login /></UserLayout>}
+      />
+      <Route
+        path="/home"
+        element={<UserLayout><Home /></UserLayout>}
+      />
+      <Route
+        path="/products"
+        element={<UserLayout><Products /></UserLayout>}
+      />
+      <Route
+        path="/contact"
+        element={<UserLayout><Contact /></UserLayout>}
+      />
+      <Route
+        path="/about"
+        element={<UserLayout><About /></UserLayout>}
+      />
+      <Route
+        path="/cart"
+        element={<UserLayout><CartPage /></UserLayout>}
+      />
+      <Route
+        path="/account"
+        element={<UserLayout><Account /></UserLayout>}
+      />
 
-      {/* --- Show Sidebar only for admin pages --- */}
-      {isAdminPage && (
-        <Sidebar
-          isCollapsed={isCollapsed}
-          toggleSidebar={() => setIsCollapsed(!isCollapsed)}
-        />
-      )}
-
-      {/* --- Main content area --- */}
-      <div
-        style={{
-          flex: 1,
-          padding: isAdminPage ? "20px" : "0",
-          marginLeft: isAdminPage && !isCollapsed ? "250px" : "80px", // ✅ adjust for sidebar width
-          transition: "margin-left 0.3s ease",
-        }}
-      >
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/admin/dashboard" element={<Admindashboard />} />
-          <Route path="/admin/product" element={<Product />} />
-          <Route path="/admin/inventory" element={<Inventory />} />
-        </Routes>
-      </div>
-    </div>
+      {/* --- Admin routes --- */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+            <Admindashboard />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="/admin/product"
+        element={
+          <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+            <Product />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="/admin/inventory"
+        element={
+          <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+            <Inventory />
+          </AdminLayout>
+        }
+      />
+    </Routes>
   );
 }
 
