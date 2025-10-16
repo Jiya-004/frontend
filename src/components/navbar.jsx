@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../css/Navbar.css";
-import { useCart } from "../components/Cartcomponent"; 
+import { useCart } from "./Cartcomponent"; 
 import { useAuth } from "../hooks/useAuth"; // ⬅️ NEW IMPORT
 
 export default function Navbar() {
