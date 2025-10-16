@@ -1,17 +1,9 @@
-import React, { useState } from "react";
-import Sidebar from "./Sidebar";
+import React from "react";
 import "../css/AdminPanel.css";
 
 export default function Dashboard() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   return (
-    <div className={`admin-panel-container ${isCollapsed ? "sidebar-closed" : ""}`}>
-      <Sidebar
-        isCollapsed={isCollapsed}
-        toggleSidebar={() => setIsCollapsed(!isCollapsed)}
-      />
-
+    <div className="admin-panel-container">
       <header className="admin-header">
         <h2>Admin Dashboard</h2>
       </header>

@@ -64,15 +64,15 @@ export default function Sidebar({ isCollapsed, toggleSidebar }) {
           {openMenus.products && (
             <div className="submenu">
               <Link
-                to="/admin/products/add"
-                className={`nav-sub-item ${isActive("/admin/products/add") ? "nav-item-active" : ""}`}
+                to="/admin/product"
+                className={`nav-sub-item ${isActive("/admin/product") ? "nav-item-active" : ""}`}
               >
                 <Package className="nav-sub-item-icon" />
                 <span>Add New Product</span>
               </Link>
               <Link
-                to="/admin/products/inventory"
-                className={`nav-sub-item ${isActive("/admin/products/inventory") ? "nav-item-active" : ""}`}
+                to="/admin/Inventory"
+                className={`nav-sub-item ${isActive("/admin/Inventory") ? "nav-item-active" : ""}`}
               >
                 <FileText className="nav-sub-item-icon" />
                 <span>Inventory</span>
