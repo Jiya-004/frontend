@@ -27,8 +27,11 @@ export default function Login() {
     
     try {
       const res = await axios.post("http://127.0.0.1:8080/api/login", form);
-      const user = res.data.user; // Get user object from response
-      setMessage(res.data.message);
+      
+      const { user, token, message } = res.data; 
+      
+      // ✅ Use the centralized 'login' function
+      login(token, user); 
 
       setMessage(message);
 
