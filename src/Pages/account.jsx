@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../css/MyAccount.css';
 
 /**
- * Account information card component
+ * Account information card component (No change needed)
  */
 const InfoCard = ({ icon: Icon, title, value, onEdit, editable = false }) => (
   <div className="info-card">
@@ -28,23 +28,18 @@ const InfoCard = ({ icon: Icon, title, value, onEdit, editable = false }) => (
 );
 
 /**
- * Custom Modal for editing fields
+ * Custom Modal for editing fields (No change needed)
  */
 const EditModal = ({ title, field, currentValue, onClose, onSave }) => {
   const [newValue, setNewValue] = useState(currentValue);
   const [error, setError] = useState('');
 
-  const handleSave = () => {
-    setError('');
+  const handleFinalSave = () => {
     if (!newValue.trim()) {
       setError(`${title} cannot be empty.`);
       return;
     }
-    if (field === 'gmail' && !newValue.includes('@')) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-    onSave(field, newValue);
+    onSave(field, newValue); 
   };
 
   return (
@@ -73,7 +68,7 @@ const EditModal = ({ title, field, currentValue, onClose, onSave }) => {
           <button onClick={onClose} className="modal-cancel-button">
             Cancel
           </button>
-          <button onClick={handleSave} className="modal-save-button">
+          <button onClick={handleFinalSave} className="modal-save-button">
             <Save className="save-icon" />
             Save Changes
           </button>
@@ -91,21 +86,26 @@ export default function MyAccount() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentFieldToEdit, setCurrentFieldToEdit] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ message: '', type: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assume logged in by default
+  const [isLoggedIn, setIsLoggedIn] = useState(true); 
 
-  // Fetch logged-in user data from Laravel API
+  // --- START FIX: Standardize authentication check and data fetching ---
   useEffect(() => {
+    // ⚠️ ASSUMPTION: The user object in localStorage has an 'email' key.
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (!storedUser) {
+
+    // Check if the user object exists AND contains a key called 'email'
+    if (!storedUser || !storedUser.email) { 
       setIsLoggedIn(false);
       return;
     }
 
-    axios.get(`http://127.0.0.1:8000/api/user?email=${storedUser.email}`)
+    // Use stored email for fetching user data
+    axios.get(`http://127.0.0.1:8085/api/user?email=${storedUser.email}`)
       .then(res => {
+        // Map backend response keys (name, email) to frontend state keys (userName, gmail)
         setUserData({
           userName: res.data.name,
-          gmail: res.data.email
+          gmail: res.data.email 
         });
         setIsLoggedIn(true);
       })
@@ -114,19 +114,64 @@ export default function MyAccount() {
         setIsLoggedIn(false);
       });
   }, []);
+  // --- END FIX ---
 
-  const handleSave = (field, value) => {
-    // Here you can call your API to save the data
-    console.log(`Simulated save for ${field}: ${value}`);
-    setUserData(prev => ({ ...prev, [field]: value }));
-    setIsModalOpen(false);
+  // --- START FIX: Update handleSave to use consistent authentication keys ---
+  const handleSave = async (field, value) => {
+    // ⚠️ ASSUMPTION: The user object in localStorage has an 'email' key.
+    const storedUser = JSON.parse(localStorage.getItem("user"));
 
-    setStatusMessage({ 
-      message: `${field === 'gmail' ? 'Email' : 'Name'} successfully updated!`, 
-      type: 'success' 
-    });
-    setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
+    if (!storedUser || !storedUser.email) { 
+        setStatusMessage({ message: 'Error: User not authenticated.', type: 'error' });
+        setIsModalOpen(false);
+        return;
+    }
+
+    // Payload uses existing email (from localStorage) for user identification
+    const payload = { email: storedUser.email }; 
+    let updatedLocalStorageData = { ...storedUser };
+
+    // Map frontend state keys (field) to backend payload keys
+    if (field === "userName") {
+        payload.name = value; // Backend expects 'name'
+        updatedLocalStorageData.name = value; // Update 'name' in local storage object
+    } else if (field === "gmail") {
+        payload.new_email = value; // Backend expects 'new_email'
+        updatedLocalStorageData.email = value; // Update 'email' in local storage object
+        // NOTE: If email changes, the next API calls must use the new email
+        payload.email = storedUser.email; // Use OLD email for API call identification
+    } else if (field === "password") {
+        payload.password = value;
+    }
+
+    try {
+      const res = await axios.put('http://127.0.0.1:8085/api/user', payload);
+      
+      // Update frontend state with the new value
+      setUserData(prev => ({ 
+        ...prev, 
+        [field]: field === 'password' ? prev.password : value 
+      }));
+      
+      // Update localStorage with the changes
+      localStorage.setItem('user', JSON.stringify(updatedLocalStorageData));
+
+      setIsModalOpen(false);
+      setStatusMessage({ message: res.data.message || `${field} updated successfully!`, type: 'success' });
+      setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
+
+    } catch (err) {
+      console.error('Update failed:', err.response?.data || err);
+      setIsModalOpen(false); 
+      setStatusMessage({ 
+        message: err.response?.data?.message || 'Failed to update account.', 
+        type: 'error' 
+      });
+      setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
+    }
   };
+  // --- END FIX ---
+
 
   const openModal = (field) => {
     setCurrentFieldToEdit(field);
@@ -134,7 +179,7 @@ export default function MyAccount() {
   };
 
   const getModalDetails = () => {
-    if (!currentFieldToEdit) return {};
+    if (!currentFieldToEdit || !userData) return {};
     const titleMap = {
       userName: 'User Name',
       gmail: 'Email Address',
@@ -155,7 +200,7 @@ export default function MyAccount() {
       <header className="account-header">
         <div className="header-back"
           onClick={() => {
-            window.location.replace("/home"); // Prevent back navigation
+            window.location.replace("/home"); 
           }}>
           <ArrowLeft className="back-icon" />
           <span className="back-text">Back to home</span>
@@ -165,7 +210,7 @@ export default function MyAccount() {
           onClick={() => {
             localStorage.removeItem("user");
             localStorage.removeItem("authToken");
-            window.location.replace("/"); // Prevent back navigation
+            window.location.replace("/"); 
           }}
         >
           <LogOut className="signout-icon" />

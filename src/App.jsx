@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar";
 import LandingPage from "./Pages/LandingPage";
 import SignUp from "./Pages/signup";
@@ -8,15 +8,20 @@ import Contact from "./Pages/contact";
 import About from "./Pages/About";
 import { CartProvider } from "./components/Cartcomponent";
 import CartPage from "./Pages/CartPage";
+import Products from "./Pages/product";
+import Account from "./Pages/account";
+import Dashboard from "./admin/dashboard";
 
-import Products from "./Pages/product"; 
-import Account from "./Pages/account"; // ✅ Added
+// Separate wrapper so we can use useLocation
+function AppContent() {
+  const location = useLocation();
 
-function App() {
+  // ✅ Hide Navbar on admin routes
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
-    <CartProvider>
-    <Router>
-      <Navbar />
+    <>
+      {!isAdminRoute && <Navbar />}
 
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -24,15 +29,22 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/contact" element={<Contact/>}/>
-        <Route path="/about" element={<About/>}/>
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/account" element={<Account />} />
-          {/* ✅ Added */}
+        <Route path="/admin/dashboard" element={<Dashboard />} />
       </Routes>
-    </Router>
-    </CartProvider>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <CartProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </CartProvider>
+  );
+}
