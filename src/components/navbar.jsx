@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
-import { Link,NavLink} from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../css/Navbar.css";
-import { useCart } from "../components/Cartcomponent"; // 👈 import
+import { useCart } from "../components/Cartcomponent"; 
+import { useAuth } from "../hooks/useAuth"; // ⬅️ NEW IMPORT
 
-export default function Navbar({ onLogout }) {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-  const { cartItems } = useCart(); // 👈 use context
+  const { cartItems } = useCart();
+
+  // 🔑 GET AUTH STATE AND LOGOUT FUNCTION
+  const { isLoggedIn, logout } = useAuth(); 
+  const navigate = useNavigate();
+
+  // Handler for the logout button
+  const handleLogout = () => {
+    logout(navigate); 
+  };
 
   return (
     <nav className="navbar">
@@ -21,7 +31,23 @@ export default function Navbar({ onLogout }) {
           <NavLink to="/products" className="nav-link">Products</NavLink>
           <NavLink to="/about" className="nav-link">About</NavLink>
           <NavLink to="/contact" className="nav-link">Contact</NavLink>
-          <NavLink to="/login" className="logout-btn">Login</NavLink>
+          
+          {/* 🔑 CONDITIONAL RENDERING HERE: Login vs. Logout */}
+          {isLoggedIn ? (
+            // Show Logout Button if user is logged in
+            <button 
+              onClick={handleLogout} 
+              className=" logout-btn" // Reuses your existing styling class
+            >
+              Logout
+            </button>
+          ) : (
+            // Show Login Link if user is NOT logged in
+            <NavLink to="/login" className="nav-link logout-btn">
+              Login
+            </NavLink>
+          )}
+          
         </div>
 
         <div className="navbar-icons">

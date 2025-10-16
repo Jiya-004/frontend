@@ -100,7 +100,7 @@ export default function MyAccount() {
     }
 
     // Use stored email for fetching user data
-    axios.get(`http://127.0.0.1:8085/api/user?email=${storedUser.email}`)
+    axios.get(`http://127.0.0.1:8080/api/user?email=${storedUser.email}`)
       .then(res => {
         // Map backend response keys (name, email) to frontend state keys (userName, gmail)
         setUserData({
@@ -145,7 +145,7 @@ export default function MyAccount() {
     }
 
     try {
-      const res = await axios.put('http://127.0.0.1:8085/api/user', payload);
+      const res = await axios.put('http://127.0.0.1:8080/api/user', payload);
       
       // Update frontend state with the new value
       setUserData(prev => ({ 
