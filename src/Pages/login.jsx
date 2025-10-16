@@ -1,15 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { setAuthToken } from "../axiosConfig"; 
+import { useAuth } from "../hooks/useAuth"; // ⬅️ IMPORT THE HOOK
 import "../css/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // ⬅️ GET THE LOGIN FUNCTION
+  
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
+  // Use state to handle error/success messages
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
@@ -18,22 +23,28 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/login", form);
-      const user = res.data.user; // Get user object from response
-      setMessage(res.data.message);
+      const res = await axios.post("http://127.0.0.1:8080/api/login", form);
+      
+      const { user, token, message } = res.data; 
+      
+      // ✅ Use the centralized 'login' function
+      login(token, user); 
 
-      // Save user info for later
-      localStorage.setItem("user", JSON.stringify(user));
+      setMessage(message);
 
       // ✅ Redirect based on role
       if (user.role === "admin") {
-        navigate("/admin/dashboard"); // Admin dashboard route
+        navigate("/admin/dashboard");
       } else {
-        navigate("/home"); // Normal user home
+        navigate("/home");
       }
     } catch (error) {
-      setMessage("Invalid email or password");
+      // Check for the specific 401 response error message from the backend
+      const errorMessage = error.response?.data?.message || "An unexpected error occurred.";
+      setMessage(errorMessage);
     }
   };
 
@@ -41,7 +52,8 @@ export default function Login() {
     <div className="login-page-wrapper">
       <div className="login-card">
         <h2>Login</h2>
-        {message && <p className="status-message">{message}</p>}
+        {/* Use a class to style the error message differently */}
+        {message && <p className={`status-message ${message.includes('Invalid') ? 'error' : ''}`}>{message}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -65,7 +77,7 @@ export default function Login() {
               required
             />
           </div>
-
+          
           <a href="#" className="forgot-password">
             Forgot password?
           </a>

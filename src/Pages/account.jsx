@@ -101,7 +101,7 @@ export default function MyAccount() {
       return;
     }
 
-    axios.get(`http://127.0.0.1:8000/api/user?email=${storedUser.email}`)
+    axios.get(`http://127.0.0.1:8080/api/user?email=${storedUser.email}`)
       .then(res => {
         setUserData({
           userName: res.data.name,
