@@ -7,20 +7,29 @@ import {
   ChevronRight,
   Package,
   FileText,
+  LogOut, // ✅ added logout icon
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import "../css/AdminPanel.css"; // ✅ Make sure your CSS file name matches
+import { Link, useLocation, useNavigate } from "react-router-dom"; // ✅ added useNavigate
+import "../css/AdminPanel.css";
+import { useAuth } from "../hooks/useAuth"; // ✅ added auth context import
 
 export default function Sidebar({ isCollapsed, toggleSidebar }) {
   const location = useLocation();
+  const navigate = useNavigate(); // ✅ added
+  const { logout } = useAuth(); // ✅ access logout from AuthContext
   const [openMenus, setOpenMenus] = useState({});
 
-  // Handle submenu toggles (e.g. products, orders, customers)
+  // Handle submenu toggles
   const toggleMenu = (menu) => {
     setOpenMenus((prev) => ({ ...prev, [menu]: !prev[menu] }));
   };
 
   const isActive = (path) => location.pathname === path;
+
+  // ✅ Logout handler
+  const handleLogout = async () => {
+    await logout(navigate); // clears auth + redirects to login
+  };
 
   return (
     <aside className={`admin-sidebar ${isCollapsed ? "collapsed" : ""}`}>
@@ -149,6 +158,12 @@ export default function Sidebar({ isCollapsed, toggleSidebar }) {
           <Settings className="nav-item-icon" />
           <span>Settings</span>
         </Link>
+
+        {/* ✅ Logout Button at Bottom */}
+        <button onClick={handleLogout} className="nav-item logout-btn">
+          <LogOut className="nav-item-icon" />
+          <span>Logout</span>
+        </button>
       </nav>
     </aside>
   );

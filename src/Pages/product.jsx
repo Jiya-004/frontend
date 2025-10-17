@@ -1,33 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Card from "../components/card";
 import "../css/Product.css";
-import thali1 from "../assets/thali1.png";
+import axios from "axios";
 
 export default function Products() {
-  // Sample product list
-  const products = [
-    { id: 1, title: "Handmade Pot", image: thali1, price: 1200 },
-    { id: 2, title: "Wooden Frame", image: thali1, price: 900 },
-    { id: 3, title: "Artistic Vase", image: thali1, price: 1500 },
-    { id: 4, title: "Thali", image: thali1, price: 1200 },
-    { id: 5, title: "Puja plate", image: thali1, price: 1000 },
-  ];
-
-  // State for search input
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch products from your Laravel API
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8080/api/products") // ✅ Replace with your actual API endpoint
+      .then((res) => {
+        setProducts(res.data);
+      })
+      .catch((err) => console.error("Error fetching products:", err));
+  }, []);
 
   // Filter products based on search term
   const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="products-page-wrapper"> {/* Renamed for clarity */}
-      <h2 className="products-heading">Our Products</h2> {/* Renamed for clarity */}
+    <div className="products-page-wrapper">
+      <h2 className="products-heading">Our Products</h2>
 
       {/* 🔍 Search Bar Section */}
-      <div className="search-bar-container"> {/* NEW: Container for centering */}
+      <div className="search-bar-container">
         <div className="search-bar">
           <Search className="search-icon" />
           <input
@@ -42,12 +43,14 @@ export default function Products() {
       {/* 🧺 Product Cards */}
       <div className="card-list">
         {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
+          filteredProducts.map((product, index) => (
             <Card
-              key={product.id}
-              title={product.title}
-              image={product.image}
+              key={index}
+              title={product.name}
               price={product.price}
+              // 👇 FIXED: Update image path based on your Laravel folder
+              image={`http://127.0.0.1:8080/storage/${product.image}`} 
+        
             />
           ))
         ) : (
