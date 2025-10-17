@@ -1,125 +1,250 @@
-/* Base Page Styling */
 .cart-page {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    /* --- NEW BACKGROUND COLOR --- */
-    background-color: #E6E6FA; /* Lavender (#E6E6FA) as requested */
-    /* -------------------------- */
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #faf7ff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(150, 100, 255, 0.08);
+  font-family: 'Poppins', sans-serif;
+  color: #4a3a80;
 }
 
-.cart-page h2 {
-    text-align: center;
-    color: #6a5acd; /* Medium Lavender/Amethyst for contrast */
-    margin-bottom: 30px;
-    font-size: 2.2em;
-    border-bottom: 2px solid #d8bfd8; /* Thistle/Lighter border */
-    padding-bottom: 10px;
+.cart-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b14cff;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
 }
 
-/* Empty Cart Message */
-.cart-page > p {
-    text-align: center;
-    font-size: 1.2em;
-    color: #8b879c; /* Soft gray-purple */
-    padding: 50px 0;
+.empty-cart {
+  text-align: center;
+  color: #9c8ec4;
+  font-size: 1.1rem;
+  padding: 30px;
 }
 
-/* Cart List */
-.cart-page ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* ==============================
+   CART ITEMS
+============================== */
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Individual Cart Item */
 .cart-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 10px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    background-color: #ffffff; /* Keep item backgrounds white for high contrast */
-    transition: all 0.3s ease;
-    border: 1px solid #d8bfd8; /* Thistle border */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(150, 100, 255, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 .cart-item:hover {
-    box-shadow: 0 2px 10px rgba(106, 90, 205, 0.1); /* Subtle hover effect */
-    transform: translateY(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(150, 100, 255, 0.1);
 }
 
-.cart-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-right: 15px;
-    border: 1px solid #dcdcdc; /* Light gray border for image */
+.cart-image {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #f0eaff;
 }
 
-.cart-item > div {
-    flex-grow: 1;
-    margin-right: 20px;
+.cart-details {
+  flex: 1;
+  margin-left: 20px;
 }
 
-.cart-item h4 {
-    margin: 0 0 5px 0;
-    font-size: 1.1em;
-    color: #483d8b; /* Darker Slate Blue/Purple for title */
-    font-weight: 600;
+.cart-details h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #4a3a80;
+  font-weight: 600;
 }
 
-.cart-item p {
-    margin: 0;
-    color: #6a5acd; /* Medium Lavender for price */
-    font-weight: bold;
+.price {
+  color: #8b7dc7;
+  margin: 5px 0;
+  font-size: 0.95rem;
 }
 
-/* Remove Button */
-.cart-item button {
-    background-color: #ff6961; /* Soft Red for "Remove" */
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s ease, transform 0.1s;
-    flex-shrink: 0;
+/* ==============================
+   QUANTITY CONTROLS
+============================== */
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 5px;
 }
 
-.cart-item button:hover {
-    background-color: #e5534b; /* Darker red on hover */
-    transform: translateY(-1px);
+.quantity-controls button {
+  background: #e8defc;
+  border: none;
+  color: #6a4fff;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 4px 10px;
+  transition: all 0.2s ease;
 }
 
-/* Media Query for smaller screens */
-@media (max-width: 600px) {
-    .cart-page {
-        margin: 20px;
-        padding: 15px;
-    }
+.quantity-controls button:hover {
+  background: #d8c7ff;
+}
 
-    .cart-item {
-        flex-wrap: wrap;
-        text-align: center;
-        justify-content: center;
-    }
+.quantity-controls span {
+  font-weight: 600;
+  color: #4a3a80;
+}
 
-    .cart-item img {
-        margin-bottom: 10px;
-    }
+/* ==============================
+   REMOVE BUTTON
+============================== */
 
-    .cart-item > div {
-        flex-basis: 100%;
-        margin: 0 0 10px 0;
-    }
+.remove-btn {
+  background: #ffe6f2;
+  border: none;
+  color: #ff4f7d;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
 
-    .cart-item button {
-        width: 100%;
-    }
+.remove-btn:hover {
+  background: #ffccdc;
+  color: #ff1f5d;
+  transform: scale(1.05);
+}
+
+/* ==============================
+   CART SUMMARY
+============================== */
+
+.cart-summary {
+  margin-top: 30px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(150, 100, 255, 0.07);
+}
+
+.cart-summary h3 {
+  color: #b14cff;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.cart-total {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #4a3a80;
+  margin: 10px 0;
+}
+
+/* ==============================
+   CART ACTION BUTTONS
+============================== */
+
+.cart-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+/* Base button styles */
+.checkout-btn,
+.buy-now-btn,
+.clear-btn {
+  border: none;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+/* Checkout Button – Lavender-Pink gradient */
+.checkout-btn {
+  background: linear-gradient(135deg, #C93ACD, #A52DAA);
+  color: white;
+  box-shadow: 0 4px 12px rgba(201, 58, 205, 0.25);
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: linear-gradient(135deg, #A52DAA, #C93ACD);
+  box-shadow: 0 6px 15px rgba(201, 58, 205, 0.35);
+}
+
+/* Buy Now Button – Warm Pink-Gold gradient */
+.buy-now-btn {
+  background: linear-gradient(135deg, #FF6F91, #FFC75F);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 111, 145, 0.25);
+}
+
+.buy-now-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: linear-gradient(135deg, #FF4F7D, #FFB347);
+  box-shadow: 0 6px 15px rgba(255, 111, 145, 0.35);
+}
+
+/* Clear Button – Soft Lavender */
+.clear-btn {
+  background: #f8f3ff;
+  color: #C93ACD;
+  border: 1px solid #E0C7F3;
+  box-shadow: 0 3px 8px rgba(201, 58, 205, 0.08);
+}
+
+.clear-btn:hover {
+  transform: translateY(-2px);
+  background: #EBD4FF;
+  color: #A52DAA;
+  box-shadow: 0 5px 12px rgba(201, 58, 205, 0.15);
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cart-details {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .cart-actions {
+    align-self: flex-end;
+  }
+
+  .cart-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
 }
