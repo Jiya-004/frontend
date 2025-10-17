@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
-import "../css/Home.css"; // Keep your existing CSS
-import { useCart } from "../components/Cartcomponent"; // Import Cart context
+// 1. Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom"; 
+import "../css/Home.css"; 
+import { useCart } from "../components/Cartcomponent"; 
 
 export default function Home() {
   const [user, setUser] = useState({ name: "" });
-  const { addToCart } = useCart(); // Pull addToCart function from context
+  const { addToCart } = useCart(); 
+  
+  // 2. Initialize the useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate fetching user from localStorage or backend
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser && storedUser.name) {
       setUser(storedUser);
@@ -15,6 +19,11 @@ export default function Home() {
       setUser({ name: "Guest" });
     }
   }, []);
+
+  // 3. Navigation function: Sends the user to the /ourproduct path
+  const handleExploreClick = () => {
+    navigate("/products"); 
+  };
 
   // Dummy product data for Popular Products section
   const products = [
@@ -32,7 +41,14 @@ export default function Home() {
           <h2 className="hero-subtitle">Curated Handmade Goods</h2>
           <h1 className="hero-title">Elegance in Craft</h1>
           <p className="hero-description">Find unique crafts that transform your space.</p>
-          <button className="explore-button">EXPLORE COLLECTIONS</button>
+          
+          {/* 4. The button with the navigation handler */}
+          <button 
+            className="explore-button"
+            onClick={handleExploreClick} 
+          >
+            EXPLORE COLLECTIONS
+          </button>
 
           {/* DYNAMIC USER NAME */}
           <div className="welcome-message-wrapper">
