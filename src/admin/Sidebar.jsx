@@ -150,14 +150,14 @@ export default function Sidebar({ isCollapsed, toggleSidebar }) {
           )}
         </div>
 
-        {/* Settings */}
+        {/* Settings
         <Link
           to="/admin/settings"
           className={`nav-item ${isActive("/admin/settings") ? "nav-item-active" : ""}`}
         >
           <Settings className="nav-item-icon" />
           <span>Settings</span>
-        </Link>
+        </Link> */}
 
         {/* ✅ Logout Button at Bottom */}
         <button onClick={handleLogout} className="nav-item logout-btn">

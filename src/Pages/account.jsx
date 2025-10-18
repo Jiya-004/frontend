@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Lock, LogOut, CreditCard, ShoppingBag, Gift, Edit, Save, ArrowLeft, X } from 'lucide-react';
+import { User, Mail, Lock, LogOut, ShoppingBag, Edit, Save, ArrowLeft, X } from 'lucide-react';
 import axios from 'axios';
 import '../css/MyAccount.css';
 
@@ -78,28 +78,185 @@ const EditModal = ({ title, field, currentValue, onClose, onSave }) => {
   );
 };
 
+// ----------------------------------------------------------------------
+// NEW COMPONENT: OrderHistory - Adapted for your Laravel API structure
+// ----------------------------------------------------------------------
+
 /**
- * Main Account Dashboard Component
+ * Component to display the user's order history.
+ * Fetches user ID via email, then fetches orders using the user ID.
+ * Assumes: 
+ * 1. GET http://127.0.0.1:8080/api/user?email=<user-email> returns { id: ... }
+ * 2. GET http://127.0.0.1:8080/api/orders/user/{userId} returns { data: [orders...] }
  */
+const OrderHistory = ({ userEmail }) => {
+    const [orders, setOrders] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [expandedOrder, setExpandedOrder] = useState(null); 
+
+    useEffect(() => {
+        if (!userEmail) {
+            setError('Authentication error: User email not found.');
+            setIsLoading(false);
+            return;
+        }
+
+        const fetchOrders = async () => {
+            try {
+                // 1. Get the userId using the userEmail from the existing user API
+                const userResponse = await axios.get(`http://127.0.0.1:8080/api/user?email=${userEmail}`);
+                // Assuming your existing /api/user endpoint returns the user object directly, 
+                // which includes the database 'id'.
+                const userId = userResponse.data.id; 
+
+                if (!userId) {
+                    setError('User ID not found for the current email.');
+                    setIsLoading(false);
+                    return;
+                }
+
+                // 2. Use the userId to fetch the orders via your Laravel route
+                const ordersResponse = await axios.get(`http://127.0.0.1:8080/api/orders/user/${userId}`);
+                
+                // Your Laravel controller returns data inside the 'data' key for success
+                setOrders(ordersResponse.data.data); 
+                setIsLoading(false);
+
+            } catch (err) {
+                console.error('Failed to fetch user or orders:', err.response?.data || err);
+                setError('Failed to load order history. Please ensure the backend is running and the user is logged in.');
+                setIsLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, [userEmail]);
+
+    const handleToggleDetails = (orderId) => {
+        setExpandedOrder(expandedOrder === orderId ? null : orderId);
+    };
+
+    if (isLoading) {
+        return <p className="loading-text">Loading order history... ⏳</p>;
+    }
+
+    if (error) {
+        return <p className="error-text">❌ {error}</p>;
+    }
+
+    // Order Details Sub-Component
+    const OrderDetails = ({ order }) => (
+        <div className="order-items-details">
+            <div className="shipping-info">
+                <strong>Shipping Address:</strong> {order.shipping_address}<br/>
+                <strong>Contact Phone:</strong> {order.phone}
+            </div>
+            <h4>Items Ordered:</h4>
+            <table className="order-items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {/* orderItems comes from the 'with('orderItems')' relationship in your Laravel controller */}
+                    {order.order_items.map(item => (
+                        <tr key={item.id}>
+                            <td>
+                                {/* Assuming product_image contains a valid URL or path */}
+                                <img src={item.product_image} alt={item.product_name} className="product-thumb" />
+                                {item.product_name}
+                            </td>
+                            <td>Rs. {parseFloat(item.product_price).toFixed(2)}</td>
+                            <td>{item.quantity}</td>
+                            <td>Rs. {parseFloat(item.subtotal).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+
+    return (
+        <div className="order-history">
+            <h2 className="content-title">Order History</h2>
+            <p className="content-subtitle">
+                View the details and status of your past orders.
+            </p>
+
+            {orders.length === 0 ? (
+                <p className="no-orders">You haven't placed any orders yet. 🛒</p>
+            ) : (
+                <div className="orders-table-container">
+                    <table className="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders.map((order) => (
+                                <React.Fragment key={order.id}>
+                                    <tr>
+                                        <td>{order.order_number}</td>
+                                        <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                                        <td>**Rs. {parseFloat(order.total_amount).toFixed(2)}**</td>
+                                        <td><span className={`status-${order.status.toLowerCase()}`}>{order.status}</span></td>
+                                        <td>
+                                            <button 
+                                                className="view-details-button"
+                                                onClick={() => handleToggleDetails(order.id)}
+                                            >
+                                                {expandedOrder === order.id ? 'Hide' : 'View'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {expandedOrder === order.id && (
+                                        <tr className="order-details-row">
+                                            <td colSpan="5">
+                                                <OrderDetails order={order} />
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ----------------------------------------------------------------------
+// Main Account Dashboard Component
+// ----------------------------------------------------------------------
 export default function MyAccount() {
   const [userData, setUserData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentFieldToEdit, setCurrentFieldToEdit] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ message: '', type: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(true); 
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // State to control the active sidebar section
+  const [selectedSection, setSelectedSection] = useState('personal-information'); 
 
-  // --- START FIX: Standardize authentication check and data fetching ---
+  // --- Data Fetching (Uses stored email to fetch user data) ---
   useEffect(() => {
-    // ⚠️ ASSUMPTION: The user object in localStorage has an 'email' key.
     const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    // Check if the user object exists AND contains a key called 'email'
     if (!storedUser || !storedUser.email) { 
       setIsLoggedIn(false);
       return;
     }
 
-    // Use stored email for fetching user data
     axios.get(`http://127.0.0.1:8080/api/user?email=${storedUser.email}`)
       .then(res => {
         // Map backend response keys (name, email) to frontend state keys (userName, gmail)
@@ -114,11 +271,9 @@ export default function MyAccount() {
         setIsLoggedIn(false);
       });
   }, []);
-  // --- END FIX ---
 
-  // --- START FIX: Update handleSave to use consistent authentication keys ---
+  // --- Handle Save (Updates User Data) ---
   const handleSave = async (field, value) => {
-    // ⚠️ ASSUMPTION: The user object in localStorage has an 'email' key.
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
     if (!storedUser || !storedUser.email) { 
@@ -127,18 +282,15 @@ export default function MyAccount() {
         return;
     }
 
-    // Payload uses existing email (from localStorage) for user identification
     const payload = { email: storedUser.email }; 
     let updatedLocalStorageData = { ...storedUser };
 
-    // Map frontend state keys (field) to backend payload keys
     if (field === "userName") {
-        payload.name = value; // Backend expects 'name'
-        updatedLocalStorageData.name = value; // Update 'name' in local storage object
+        payload.name = value; 
+        updatedLocalStorageData.name = value; 
     } else if (field === "gmail") {
-        payload.new_email = value; // Backend expects 'new_email'
-        updatedLocalStorageData.email = value; // Update 'email' in local storage object
-        // NOTE: If email changes, the next API calls must use the new email
+        payload.new_email = value; 
+        updatedLocalStorageData.email = value; 
         payload.email = storedUser.email; // Use OLD email for API call identification
     } else if (field === "password") {
         payload.password = value;
@@ -147,13 +299,11 @@ export default function MyAccount() {
     try {
       const res = await axios.put('http://127.0.0.1:8080/api/user', payload);
       
-      // Update frontend state with the new value
       setUserData(prev => ({ 
         ...prev, 
         [field]: field === 'password' ? prev.password : value 
       }));
       
-      // Update localStorage with the changes
       localStorage.setItem('user', JSON.stringify(updatedLocalStorageData));
 
       setIsModalOpen(false);
@@ -170,7 +320,6 @@ export default function MyAccount() {
       setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
     }
   };
-  // --- END FIX ---
 
 
   const openModal = (field) => {
@@ -193,6 +342,55 @@ export default function MyAccount() {
   };
 
   const modalDetails = getModalDetails();
+
+  // --- Function to render the main content area based on sidebar selection ---
+  const renderContent = () => {
+    if (!isLoggedIn || !userData) {
+      return (
+        <p className="login-prompt">
+          You are not logged in. Please <a href="/login">log in</a> to access your account.
+        </p>
+      );
+    }
+
+    if (selectedSection === 'personal-information') {
+      return (
+        <>
+          <h2 className="content-title">Personal Information</h2>
+          <p className="content-subtitle">
+            Manage your personal information, including your user name, email address, and password.
+          </p>
+
+          <div className="info-grid">
+            <InfoCard 
+              icon={User} 
+              title="User Name" 
+              value={userData.userName} 
+              onEdit={() => openModal('userName')}
+              editable={true}
+            />
+            <InfoCard 
+              icon={Mail} 
+              title="Email Address" 
+              value={userData.gmail} 
+              onEdit={() => openModal('gmail')}
+              editable={true}
+            />
+            <InfoCard 
+              icon={Lock} 
+              title="Password" 
+              value="********"
+              onEdit={() => openModal('password')}
+              editable={true}
+            />
+          </div>
+          {/* Removed Billing and Gift Card InfoCards */}
+        </>
+      );
+    } else if (selectedSection === 'order-history') {
+      return <OrderHistory userEmail={userData.gmail} />;
+    }
+  };
 
   return (
     <div className="account-container">
@@ -242,22 +440,21 @@ export default function MyAccount() {
             </div>
 
             <nav className="sidebar-nav">
+              {/* Only Personal Info and Order History remain */}
               {[ 
-                { name: 'Personal Information', icon: User },
-                { name: 'Billing & Payments', icon: CreditCard },
-                { name: 'Order History', icon: ShoppingBag },
-                { name: 'Gift Cards', icon: Gift }
+                { id: 'personal-information', name: 'Personal Information', icon: User },
+                { id: 'order-history', name: 'Order History', icon: ShoppingBag }
               ].map(item => {
                 const IconComponent = item.icon;
                 return (
-                  <a
-                    key={item.name}
-                    href={`#${item.name.toLowerCase().replace(/ & /g, '_').replace(/ /g, '-')}`}
-                    className={`nav-link ${item.name === 'Personal Information' ? 'nav-link-active' : ''}`}
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedSection(item.id)}
+                    className={`nav-link ${item.id === selectedSection ? 'nav-link-active' : ''}`}
                   >
                     <IconComponent className="nav-icon" />
                     {item.name}
-                  </a>
+                  </button>
                 );
               })}
             </nav>
@@ -265,51 +462,7 @@ export default function MyAccount() {
 
           {/* Right Content */}
           <div className="content-area">
-            <h2 className="content-title">Personal Information</h2>
-
-            {!isLoggedIn || !userData ? (
-              <p className="login-prompt">
-                You are not logged in. Please <a href="/login">log in</a> to access your account.
-              </p>
-            ) : (
-              <>
-                <p className="content-subtitle">
-                  Manage your personal information, including your user name, email address, and password.
-                </p>
-
-                <div className="info-grid">
-                  <InfoCard 
-                    icon={User} 
-                    title="User Name" 
-                    value={userData.userName} 
-                    onEdit={() => openModal('userName')}
-                    editable={true}
-                  />
-                  <InfoCard 
-                    icon={Mail} 
-                    title="Email Address" 
-                    value={userData.gmail} 
-                    onEdit={() => openModal('gmail')}
-                    editable={true}
-                  />
-                  <InfoCard 
-                    icon={Lock} 
-                    title="Password" 
-                    value="********"
-                    onEdit={() => openModal('password')}
-                    editable={true}
-                  />
-                </div>
-
-                <div className="additional-info">
-                  <h3 className="additional-title">Other Details</h3>
-                  <div className="additional-grid">
-                    <InfoCard icon={CreditCard} title="Billing Status" value="Active" />
-                    <InfoCard icon={Gift} title="Gift Card Balance" value="Rs. 500.00" />
-                  </div>
-                </div>
-              </>
-            )}
+            {renderContent()}
           </div>
         </div>
       </div>

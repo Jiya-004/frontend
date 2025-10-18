@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Root Variables */
+/* Root Variables - Keep these for your preferred color scheme */
 :root {
-  --primary-color: #C483F0;
-  --background-color: #FBF8FF;
+  --primary-color: #C483F0; /* Your purple accent */
+  --background-color: #FBF8FF; /* Your light background */
   --text-color: #333333;
-  --accent-bg: #EEE0F9;
+  --accent-bg: #EEE0F9; /* Your light purple background */
   --white: #ffffff;
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
@@ -199,12 +199,17 @@
 .nav-link {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding: 0.75rem;
   border-radius: 0.5rem;
   font-weight: 500;
   color: var(--gray-700);
   text-decoration: none;
   transition: all 0.15s;
+  background-color: transparent;
+  border: 1px solid transparent;
+  width: 100%;
+  cursor: pointer;
 }
 
 .nav-link:hover {
@@ -213,7 +218,7 @@
 
 .nav-link-active {
   background-color: var(--primary-color);
-  color: var(--white);
+  color: var(--white) !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -266,7 +271,7 @@
 
 @media (min-width: 1024px) {
   .info-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -336,32 +341,6 @@
   color: var(--gray-300);
 }
 
-/* Additional Info Section */
-.additional-info {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--accent-bg);
-}
-
-.additional-title {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--text-color);
-  margin-bottom: 1rem;
-}
-
-.additional-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .additional-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -384,107 +363,161 @@
   border-top: 8px solid var(--primary-color);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+/* -------------------------------------------------------------------------- */
+/* Order History Specific Styles */
+/* -------------------------------------------------------------------------- */
+.loading-text,
+.error-text,
+.no-orders {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+  background-color: var(--gray-50);
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid var(--gray-200);
 }
 
-.modal-title {
-  font-size: 1.25rem;
+.error-text {
+  color: var(--red-800);
+  background-color: var(--red-100);
+  border-color: var(--red-100);
+}
+
+.orders-table-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+
+.orders-table th {
+  background-color: var(--gray-50);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--gray-700);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
 }
 
-.modal-close-button {
-  color: var(--gray-500);
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.orders-table tbody tr:hover {
+  background-color: var(--gray-50);
+}
+
+/* Status Badges */
+.status-pending {
+  color: #f97316;
+  font-weight: 600;
+}
+
+.status-processing {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.status-completed {
+  color: var(--green-800);
+  font-weight: 600;
+}
+
+.status-cancelled {
+  color: var(--red-800);
+  font-weight: 600;
+}
+
+.view-details-button {
   background: none;
   border: none;
+  color: var(--primary-color);
   cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+  text-decoration: underline;
+  font-size: 0.875rem;
   transition: color 0.2s;
 }
 
-.modal-close-button:hover {
-  color: var(--gray-900);
+.view-details-button:hover {
+  color: var(--text-color);
 }
 
-.close-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+.order-details-row td {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--gray-200) !important;
 }
 
-.modal-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gray-700);
-  margin-bottom: 0.5rem;
+.order-items-details {
+  padding: 1.5rem;
+  background-color: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 0;
 }
 
-.modal-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 0.5rem;
+.order-items-details h4 {
   font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.modal-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  ring: 2px;
-  ring-color: var(--primary-color);
-  ring-opacity: 0.5;
-}
-
-.modal-error {
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  font-weight: 500;
-  color: var(--primary-color);
-}
-
-.modal-actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.modal-cancel-button {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 0.5rem;
   color: var(--gray-700);
-  background-color: var(--white);
-  cursor: pointer;
-  transition: background-color 0.2s;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--gray-300);
+  padding-bottom: 0.5rem;
 }
 
-.modal-cancel-button:hover {
-  background-color: var(--gray-100);
+.shipping-info {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--gray-300);
+  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
-.modal-save-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--primary-color);
-  color: var(--white);
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.shipping-info strong {
+  color: var(--text-color);
 }
 
-.modal-save-button:hover {
-  background-color: var(--text-color);
+.order-items-table {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
 }
 
-.save-icon {
-  width: 1rem;
-  height: 1rem;
+.order-items-table th,
+.order-items-table td {
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px dotted var(--gray-200);
+}
+
+.order-items-table th {
+  font-weight: 600;
+  color: var(--gray-600);
+  background-color: transparent;
+}
+
+.product-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin-right: 12px;
+  border-radius: 4px;
+  vertical-align: middle;
+  border: 1px solid var(--gray-200);
 }

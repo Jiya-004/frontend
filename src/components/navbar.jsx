@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../css/Navbar.css";
 import { useCart } from "./Cartcomponent"; 
-import { useAuth } from "../hooks/useAuth"; // ⬅️ NEW IMPORT
+import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-  const { cartItems } = useCart();
+  const { cartItems, cartCount, fetchCartFromDatabase } = useCart();
 
-  // 🔑 GET AUTH STATE AND LOGOUT FUNCTION
   const { isLoggedIn, logout } = useAuth(); 
   const navigate = useNavigate();
 
+  // Refresh cart when component mounts or when user logs in
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchCartFromDatabase();
+    }
+  }, [isLoggedIn]);
+
   // Handler for the logout button
   const handleLogout = () => {
-    logout(navigate); 
+    logout(navigate);
+    // Cart will automatically clear because fetchCartFromDatabase checks for logged in user
   };
 
   return (
@@ -32,37 +39,33 @@ export default function Navbar() {
           <NavLink to="/about" className="nav-link">About</NavLink>
           <NavLink to="/contact" className="nav-link">Contact</NavLink>
           
-          {/* 🔑 CONDITIONAL RENDERING HERE: Login vs. Logout */}
           {isLoggedIn ? (
-            // Show Logout Button if user is logged in
             <button 
               onClick={handleLogout} 
-              className=" logout-btn" // Reuses your existing styling class
+              className="logout-btn"
             >
               Logout
             </button>
           ) : (
-            // Show Login Link if user is NOT logged in
             <NavLink to="/login" className="nav-link logout-btn">
               Login
             </NavLink>
           )}
-          
         </div>
 
         <div className="navbar-icons">
           <div className="icon-wrapper">
             <Link to="/cart" className="cart-link">
               <ShoppingCart size={22} />
-              {cartItems.length > 0 && (
-                <span className="cart-count">{cartItems.length}</span>
+              {isLoggedIn && cartCount > 0 && (
+                <span className="cart-count">{cartCount}</span>
               )}
             </Link>
           </div>
 
           <div className="icon-wrapper">
-            <Link to="/account" className="account-link" aria-label="My Account" >
-            <User size={22} />
+            <Link to="/account" className="account-link" aria-label="My Account">
+              <User size={22} />
             </Link>
           </div>
 
