@@ -10,7 +10,7 @@
 .products-page-wrapper {
   padding: 40px 20px;
   /* Use a very light, almost white lavender/cream for the background */
-  background-color: var(--secondary-cream, #FAF7FF); 
+  background-color:  #E6E6FA; 
   min-height: calc(100vh - 80px);
   text-align: center;
 }
