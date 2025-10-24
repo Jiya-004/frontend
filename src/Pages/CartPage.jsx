@@ -6,7 +6,6 @@ import axios from "axios";
 import "../css/CartPage.css";
 
 export default function CartPage() {
-  // Assuming useCart provides necessary functions and state
   const { cartItems, removeFromCart, updateQuantity, clearCart, isLoading, fetchCartFromDatabase } = useCart();
   const [user, setUser] = useState(null);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
@@ -42,72 +41,70 @@ export default function CartPage() {
     }
     setCheckoutModalOpen(true);
   };
+const handleConfirmOrder = async (checkoutData) => {
+ setIsPlacingOrder(true);
 
-  // CORRECTED: This function now returns a structured object to the CheckoutModal
-  const handleConfirmOrder = async (checkoutData) => {
-    setIsPlacingOrder(true);
+ try {
+ const response = await axios.post('http://127.0.0.1:8080/api/orders', {
+ user_id: user.id,
+shipping_address: checkoutData.shipping_address,
+ phone: checkoutData.phone
+});
 
-    try {
-      // 1. Send order details to the backend
-      const response = await axios.post('http://127.0.0.1:8080/api/orders', {
-        user_id: user.id,
-        shipping_address: checkoutData.shipping_address,
-        phone: checkoutData.phone,
-        // Optional: you might need to send cart items here too, 
-        // but backend might fetch them using user_id
-      });
+      // FIX IS HERE: Access 'response.data.data' which holds the order object
+ const order = response.data.data; 
 
-      // Ensure your backend returns response.data.success = true on success
-      if (response.data.success) {
-        
-        // 2. Clear the cart state/database items after successful order placement
-        await clearCart(); 
-        
-        // 3. Return the success object expected by CheckoutModal
-        return { 
-          success: true, 
-          orderNumber: response.data.order.order_number 
-        };
-        
-      } else {
-        // 4. Return the failure object
-        return { 
-          success: false, 
-          error: response.data.message || "Server error: Order not confirmed." 
-        };
+ if (order && order.order_number) {
+alert(`✅ Order placed successfully! Order Number: ${order.order_number}`);
+ setCheckoutModalOpen(false);
+
+ // Refresh cart (should be empty now)
+          await fetchCartFromDatabase();
+
+} else {
+           // Fallback for an unexpected successful response without order data
+           alert('✅ Order placed successfully, but order number is unavailable.');
+           setCheckoutModalOpen(false);
+           await fetchCartFromDatabase();
       }
-    } catch (error) {
-      console.error('Order creation failed:', error);
-      
-      // 5. Return an error for network/unhandled issues
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Failed to connect to order service.' 
-      };
-    } finally {
-      setIsPlacingOrder(false);
-    }
-  };
+} catch (error) {
+console.error('Order creation failed:', error);
+// Improved error handling for Axios responses
+const errorMessage = error.response && error.response.data && error.response.data.message
+  ? error.response.data.message
+   : 'Failed to place order. Please try again.';
 
-  // --- Rendering Logic ---
+ alert(`❌ Failed to place order. ${errorMessage}`);
+ } finally {
+ setIsPlacingOrder(false);
+ }
+ };
 
   if (!user) {
-    // ... (Login Required block remains the same)
     return (
-        <div className="cart-page">
-          <div className="login-prompt" style={{ textAlign: 'center', padding: '40px' }}>
-            <h2>🔒 Login Required</h2>
-            <p>Please log in to view your shopping cart.</p>
-            <button 
-              className="login-btn" 
-              onClick={() => navigate('/login')}
-              style={{ padding: '12px 24px', fontSize: '16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '20px' }}
-            >
-              Go to Login
-            </button>
-          </div>
+      <div className="cart-page">
+        <div className="login-prompt" style={{ textAlign: 'center', padding: '40px' }}>
+          <h2>🔒 Login Required</h2>
+          <p>Please log in to view your shopping cart.</p>
+          <button 
+            className="login-btn" 
+            onClick={() => navigate('/login')}
+            style={{
+              padding: '12px 24px',
+              fontSize: '16px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginTop: '20px'
+            }}
+          >
+            Go to Login
+          </button>
         </div>
-      );
+      </div>
+    );
   }
 
   if (isLoading) {
@@ -130,7 +127,16 @@ export default function CartPage() {
           <p className="empty-cart">Your cart is empty 😢</p>
           <button 
             onClick={() => navigate('/products')}
-            style={{ padding: '12px 24px', fontSize: '16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '20px' }}
+            style={{
+              padding: '12px 24px',
+              fontSize: '16px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginTop: '20px'
+            }}
           >
             Browse Products
           </button>
@@ -138,9 +144,8 @@ export default function CartPage() {
       ) : (
         <>
           <ul className="cart-list">
-            {/* ... (Cart items map remains the same) ... */}
             {cartItems.map((item) => (
-               <li key={item.id} className="cart-item">
+              <li key={item.id} className="cart-item">
                 <img 
                   src={item.image} 
                   alt={item.title} 
@@ -205,13 +210,11 @@ export default function CartPage() {
         </>
       )}
 
-      {/* Pass navigate prop to CheckoutModal */}
       <CheckoutModal
         isOpen={checkoutModalOpen}
         onClose={() => setCheckoutModalOpen(false)}
         onConfirm={handleConfirmOrder}
         totalAmount={total}
-        navigate={navigate} 
       />
     </div>
   );

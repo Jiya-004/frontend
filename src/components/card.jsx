@@ -1,27 +1,27 @@
 import React, { useState } from "react";
 import { BsCart2 } from "react-icons/bs";
 import "../css/Card.css";
-import Modal from "./modal";
 import axios from "axios";
 import { useCart } from "../components/Cartcomponent";
 
 export default function Card({ title, image, price, id }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [warning, setWarning] = useState(false); // new state for warning box
   const [isLoading, setIsLoading] = useState(false);
   const { fetchCartFromDatabase } = useCart();
 
-  const handleAdd = async () => {
-    // Check if user is logged in
+  const handleAdd = async (e) => {
+    e.stopPropagation();
+
     const userStr = localStorage.getItem("user");
-    
+
     if (!userStr) {
-      setModalOpen(true);
+      setWarning(true); // show warning box
+      setTimeout(() => setWarning(false), 3000); // auto-hide after 3s
       return;
     }
 
     const user = JSON.parse(userStr);
 
-    // Validate that we have user.id and product id
     if (!user.id) {
       alert("User session invalid. Please log in again.");
       return;
@@ -36,87 +36,69 @@ export default function Card({ title, image, price, id }) {
     setIsLoading(true);
 
     try {
-      console.log("Sending cart request with:", {
-        product_id: id,
-        product_name: title,
-        product_image: image,
-        product_price: price,
-        user_id: user.id,
-        quantity: 1
-      });
-
       const response = await axios.post(
         "http://127.0.0.1:8080/api/cart/add",
-        { 
+        {
           product_id: parseInt(id),
           product_name: title,
           product_image: image,
           product_price: parseFloat(price),
           user_id: parseInt(user.id),
-          quantity: 1 
+          quantity: 1,
         },
-        { 
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          } 
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
         }
       );
 
-      console.log("Success! Cart response:", response.data);
-      
-      // Refresh cart count after adding
       if (fetchCartFromDatabase) {
         await fetchCartFromDatabase();
       }
-      
-      alert("✅ Product added to cart successfully!");
 
+      alert("✅ Product added to cart successfully!");
     } catch (err) {
-      console.error("=== CART ERROR ===");
-      console.error("Full error:", err);
-      console.error("Error message:", err.message);
-      console.error("Error response:", err.response?.data);
-      console.error("Error status:", err.response?.status);
-      
-      if (err.response?.status === 500) {
-        alert("Server error. Please check if the product and user exist in the database.");
-      } else if (err.response?.status === 422) {
-        const errors = err.response.data.errors;
-        const errorMsg = errors 
-          ? Object.values(errors).flat().join(', ') 
-          : err.response.data.message;
-        alert("Validation error: " + errorMsg);
-      } else {
-        alert("Failed to add to cart. Please try again.");
-      }
+      console.error(err);
+      alert("Failed to add to cart. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="card">
+    <div className="card" style={{ position: "relative" }}>
       <img src={image} alt={title} className="card-image" />
       <div className="card-body">
         <h3 className="card-title">{title}</h3>
         <p className="card-price">Rs. {price}</p>
-        <button 
-          className="card-btn" 
+        <button
+          className="card-btn"
           onClick={handleAdd}
           disabled={isLoading}
         >
-          <BsCart2 size={18} style={{ marginRight: "6px" }} /> 
+          <BsCart2 size={18} style={{ marginRight: "6px" }} />
           {isLoading ? "Adding..." : "Add to Cart"}
         </button>
-      </div>
 
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Not Logged In"
-        message="You are not logged in! Please login to add items to cart."
-      />
+        {/* Inline warning box */}
+        {warning && (
+          <div
+            style={{
+              marginTop: "10px",
+              padding: "8px 12px",
+              backgroundColor: "#ffe6f7",
+              color: "#a64ca6",
+              borderRadius: "6px",
+              fontSize: "14px",
+              textAlign: "center",
+            }}
+          >
+            ⚠️ You are not logged in! Please login first.
+          </div>
+        )}
+      </div>
     </div>
   );
 }
