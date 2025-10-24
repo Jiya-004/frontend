@@ -17,6 +17,7 @@ function Signup() {
   });
 
   const [message, setMessage] = useState("");
+  const [msgType, setMsgType] = useState(""); // 'success' or 'error'
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,12 +29,14 @@ function Signup() {
 
     if (form.password !== form.confirmPassword) {
       setMessage("Passwords do not match!");
+      setMsgType("error");
       return;
     }
 
     try {
       const res = await api.post("/register", form);
       setMessage(res.data.message || "Registered successfully!");
+      setMsgType("success");
       setForm({
         name: "",
         username: "",
@@ -48,6 +51,7 @@ function Signup() {
       });
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
+      setMsgType("error");
     }
   };
 
@@ -55,7 +59,7 @@ function Signup() {
     <div className="signup-page-wrapper">
       <div className="signup-card">
         <h2>Create an Account</h2>
-        {message && <p className="message">{message}</p>}
+        {message && <p className={`message ${msgType}`}>{message}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -104,14 +108,17 @@ function Signup() {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-
-          <input
-            type="date"
-            name="dob"
-            value={form.dob}
-            onChange={handleChange}
-            required
-          />
+          
+    <div className="date-input-wrapper">
+  <input
+    type="date"
+    name="dob"
+    value={form.dob}
+    onChange={handleChange}
+    required
+  />
+  {!form.dob && <span className="placeholder">Date of Birth</span>}
+</div>
 
           <textarea
             name="address"
@@ -121,7 +128,6 @@ function Signup() {
             rows="3"
             required
           ></textarea>
-
 
           <input
             type="password"

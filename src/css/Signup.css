@@ -120,3 +120,39 @@
 .signup-card button[type="submit"]:active {
     transform: scale(0.99);
 }
+.message {
+  font-size: 0.9em;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* Error = Red, Success = Green */
+.message.error {
+  color: #ff4d4f; /* bright red */
+}
+
+.message.success {
+  color: #28a745; /* bright green */
+}
+.date-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.date-input-wrapper input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+.date-input-wrapper .placeholder {
+  position: absolute;
+  left: 15px;
+  top: 12px;
+  color: #aaa;
+  pointer-events: none;
+  font-size: 1em;
+}
