@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Lock, LogOut, ShoppingBag, Edit, Save, ArrowLeft, X } from 'lucide-react';
+import { User, Mail, Lock, LogOut, ShoppingBag, Edit, Save, ArrowLeft, X, Smartphone } from 'lucide-react';
 import axios from 'axios';
 import '../css/MyAccount.css';
 
@@ -8,6 +8,7 @@ import '../css/MyAccount.css';
  */
 const InfoCard = ({ icon: Icon, title, value, onEdit, editable = false }) => (
   <div className="info-card">
+    <Icon className="card-icon" />
     <div className="info-card-content">
       <div>
         <h4 className="info-card-title">{title}</h4>
@@ -23,7 +24,6 @@ const InfoCard = ({ icon: Icon, title, value, onEdit, editable = false }) => (
         </button>
       )}
     </div>
-    <Icon className="card-icon" />
   </div>
 );
 
@@ -79,16 +79,9 @@ const EditModal = ({ title, field, currentValue, onClose, onSave }) => {
 };
 
 // ----------------------------------------------------------------------
-// NEW COMPONENT: OrderHistory - Adapted for your Laravel API structure
+// NEW COMPONENT: OrderHistory 
 // ----------------------------------------------------------------------
 
-/**
- * Component to display the user's order history.
- * Fetches user ID via email, then fetches orders using the user ID.
- * Assumes: 
- * 1. GET http://127.0.0.1:8080/api/user?email=<user-email> returns { id: ... }
- * 2. GET http://127.0.0.1:8080/api/orders/user/{userId} returns { data: [orders...] }
- */
 const OrderHistory = ({ userEmail }) => {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -104,10 +97,8 @@ const OrderHistory = ({ userEmail }) => {
 
         const fetchOrders = async () => {
             try {
-                // 1. Get the userId using the userEmail from the existing user API
+                // 1. Get the userId using the userEmail
                 const userResponse = await axios.get(`http://127.0.0.1:8080/api/user?email=${userEmail}`);
-                // Assuming your existing /api/user endpoint returns the user object directly, 
-                // which includes the database 'id'.
                 const userId = userResponse.data.id; 
 
                 if (!userId) {
@@ -116,16 +107,15 @@ const OrderHistory = ({ userEmail }) => {
                     return;
                 }
 
-                // 2. Use the userId to fetch the orders via your Laravel route
+                // 2. Use the userId to fetch the orders (assuming you updated your Laravel to include order_items)
                 const ordersResponse = await axios.get(`http://127.0.0.1:8080/api/orders/user/${userId}`);
                 
-                // Your Laravel controller returns data inside the 'data' key for success
                 setOrders(ordersResponse.data.data); 
                 setIsLoading(false);
 
             } catch (err) {
                 console.error('Failed to fetch user or orders:', err.response?.data || err);
-                setError('Failed to load order history. Please ensure the backend is running and the user is logged in.');
+                setError('Failed to load order history. Backend issue: orders/user/{id}');
                 setIsLoading(false);
             }
         };
@@ -136,6 +126,16 @@ const OrderHistory = ({ userEmail }) => {
     const handleToggleDetails = (orderId) => {
         setExpandedOrder(expandedOrder === orderId ? null : orderId);
     };
+
+    const getStatusClass = (status) => {
+      if (!status) return 'status-unknown';
+      const lowerStatus = status.toLowerCase();
+      if (lowerStatus.includes('completed')) return 'status-completed';
+      if (lowerStatus.includes('processing')) return 'status-processing';
+      if (lowerStatus.includes('shipped')) return 'status-shipped';
+      if (lowerStatus.includes('cancelled')) return 'status-cancelled';
+      return 'status-pending';
+    }
 
     if (isLoading) {
         return <p className="loading-text">Loading order history... ⏳</p>;
@@ -149,35 +149,38 @@ const OrderHistory = ({ userEmail }) => {
     const OrderDetails = ({ order }) => (
         <div className="order-items-details">
             <div className="shipping-info">
-                <strong>Shipping Address:</strong> {order.shipping_address}<br/>
-                <strong>Contact Phone:</strong> {order.phone}
+                <strong>Shipping Address:</strong> {order.shipping_address || 'Not Available'}<br/>
+                <strong>Contact Phone:</strong> {order.phone || 'Not Available'}
             </div>
             <h4>Items Ordered:</h4>
-            <table className="order-items-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* orderItems comes from the 'with('orderItems')' relationship in your Laravel controller */}
-                    {order.order_items.map(item => (
-                        <tr key={item.id}>
-                            <td>
-                                {/* Assuming product_image contains a valid URL or path */}
-                                <img src={item.product_image} alt={item.product_name} className="product-thumb" />
-                                {item.product_name}
-                            </td>
-                            <td>Rs. {parseFloat(item.product_price).toFixed(2)}</td>
-                            <td>{item.quantity}</td>
-                            <td>Rs. {parseFloat(item.subtotal).toFixed(2)}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {order.order_items && order.order_items.length > 0 ? (
+              <table className="order-items-table">
+                  <thead>
+                      <tr>
+                          <th>Product</th>
+                          <th>Price</th>
+                          <th>Qty</th>
+                          <th>Subtotal</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {order.order_items.map(item => (
+                          <tr key={item.id}>
+                              <td className="product-cell">
+                                  {/* Placeholder image if not available */}
+                                  <img src={item.product_image || 'placeholder.jpg'} alt={item.product_name} className="product-thumb" />
+                                  {item.product_name}
+                              </td>
+                              <td>Rs. {parseFloat(item.product_price).toFixed(2)}</td>
+                              <td>{item.quantity}</td>
+                              <td>Rs. {parseFloat(item.subtotal).toFixed(2)}</td>
+                          </tr>
+                      ))}
+                  </tbody>
+              </table>
+            ) : (
+                <p>No item details found for this order.</p>
+            )}
         </div>
     );
 
@@ -199,7 +202,7 @@ const OrderHistory = ({ userEmail }) => {
                                 <th>Date</th>
                                 <th>Total</th>
                                 <th>Status</th>
-                                <th>Details</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -208,8 +211,8 @@ const OrderHistory = ({ userEmail }) => {
                                     <tr>
                                         <td>{order.order_number}</td>
                                         <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                                        <td>**Rs. {parseFloat(order.total_amount).toFixed(2)}**</td>
-                                        <td><span className={`status-${order.status.toLowerCase()}`}>{order.status}</span></td>
+                                        <td className="total-amount">**Rs. {parseFloat(order.total_amount).toFixed(2)}**</td>
+                                        <td><span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span></td>
                                         <td>
                                             <button 
                                                 className="view-details-button"
@@ -245,7 +248,6 @@ export default function MyAccount() {
   const [currentFieldToEdit, setCurrentFieldToEdit] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ message: '', type: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  // State to control the active sidebar section
   const [selectedSection, setSelectedSection] = useState('personal-information'); 
 
   // --- Data Fetching (Uses stored email to fetch user data) ---
@@ -259,10 +261,12 @@ export default function MyAccount() {
 
     axios.get(`http://127.0.0.1:8080/api/user?email=${storedUser.email}`)
       .then(res => {
-        // Map backend response keys (name, email) to frontend state keys (userName, gmail)
+        // Map backend response keys (name, email, username, phone) to frontend state keys
         setUserData({
-          userName: res.data.name,
-          gmail: res.data.email 
+          fullName: res.data.name,
+          username: res.data.username,
+          email: res.data.email, 
+          phone: res.data.phone || 'N/A' // Handle nullable phone field
         });
         setIsLoggedIn(true);
       })
@@ -282,16 +286,19 @@ export default function MyAccount() {
         return;
     }
 
-    const payload = { email: storedUser.email }; 
+    const payload = { email: storedUser.email }; // Old email for API identification
     let updatedLocalStorageData = { ...storedUser };
 
-    if (field === "userName") {
+    if (field === "fullName") {
         payload.name = value; 
         updatedLocalStorageData.name = value; 
-    } else if (field === "gmail") {
+    } else if (field === "username") {
+        payload.username = value;
+    } else if (field === "phone") {
+        payload.phone = value;
+    } else if (field === "email") {
         payload.new_email = value; 
         updatedLocalStorageData.email = value; 
-        payload.email = storedUser.email; // Use OLD email for API call identification
     } else if (field === "password") {
         payload.password = value;
     }
@@ -299,25 +306,33 @@ export default function MyAccount() {
     try {
       const res = await axios.put('http://127.0.0.1:8080/api/user', payload);
       
+      // Update local state and local storage on success
       setUserData(prev => ({ 
         ...prev, 
-        [field]: field === 'password' ? prev.password : value 
+        [field]: field === 'password' ? prev.password : value,
+        // If email was changed, update the primary email key in state
+        ...(field === 'email' && { email: value })
       }));
       
-      localStorage.setItem('user', JSON.stringify(updatedLocalStorageData));
+      if (field === 'email') {
+          localStorage.setItem('user', JSON.stringify({ ...updatedLocalStorageData, email: value }));
+      } else {
+          localStorage.setItem('user', JSON.stringify(updatedLocalStorageData));
+      }
+
 
       setIsModalOpen(false);
-      setStatusMessage({ message: res.data.message || `${field} updated successfully!`, type: 'success' });
+      setStatusMessage({ message: res.data.message || `${modalDetails.title} updated successfully!`, type: 'success' });
       setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
 
     } catch (err) {
       console.error('Update failed:', err.response?.data || err);
       setIsModalOpen(false); 
       setStatusMessage({ 
-        message: err.response?.data?.message || 'Failed to update account.', 
+        message: err.response?.data?.message || err.response?.data?.errors?.username?.[0] || 'Failed to update account.', 
         type: 'error' 
       });
-      setTimeout(() => setStatusMessage({ message: '', type: '' }), 3000);
+      setTimeout(() => setStatusMessage({ message: '', type: '' }), 5000);
     }
   };
 
@@ -330,8 +345,10 @@ export default function MyAccount() {
   const getModalDetails = () => {
     if (!currentFieldToEdit || !userData) return {};
     const titleMap = {
-      userName: 'User Name',
-      gmail: 'Email Address',
+      fullName: 'Full Name',
+      username: 'User Name',
+      email: 'Email Address',
+      phone: 'Phone Number',
       password: 'Password',
     };
     return {
@@ -358,22 +375,36 @@ export default function MyAccount() {
         <>
           <h2 className="content-title">Personal Information</h2>
           <p className="content-subtitle">
-            Manage your personal information, including your user name, email address, and password.
+            Manage your personal details, email, and password.
           </p>
 
           <div className="info-grid">
             <InfoCard 
               icon={User} 
+              title="Full Name" 
+              value={userData.fullName} 
+              onEdit={() => openModal('fullName')}
+              editable={true}
+            />
+            <InfoCard 
+              icon={User} 
               title="User Name" 
-              value={userData.userName} 
-              onEdit={() => openModal('userName')}
+              value={userData.username} 
+              onEdit={() => openModal('username')}
               editable={true}
             />
             <InfoCard 
               icon={Mail} 
               title="Email Address" 
-              value={userData.gmail} 
-              onEdit={() => openModal('gmail')}
+              value={userData.email} 
+              onEdit={() => openModal('email')}
+              editable={true}
+            />
+            <InfoCard 
+              icon={Smartphone} 
+              title="Phone Number" 
+              value={userData.phone || 'N/A'} 
+              onEdit={() => openModal('phone')}
               editable={true}
             />
             <InfoCard 
@@ -384,11 +415,10 @@ export default function MyAccount() {
               editable={true}
             />
           </div>
-          {/* Removed Billing and Gift Card InfoCards */}
         </>
       );
     } else if (selectedSection === 'order-history') {
-      return <OrderHistory userEmail={userData.gmail} />;
+      return <OrderHistory userEmail={userData.email} />;
     }
   };
 
@@ -435,12 +465,11 @@ export default function MyAccount() {
               <div className="profile-avatar">
                 <User size={40} />
               </div>
-              <h2 className="profile-name">{isLoggedIn && userData ? userData.userName : "Guest"}</h2>
-              <p className="profile-email">{isLoggedIn && userData ? userData.gmail : "Please log in"}</p>
+              <h2 className="profile-name">{isLoggedIn && userData ? userData.fullName : "Guest"}</h2>
+              <p className="profile-email">{isLoggedIn && userData ? userData.email : "Please log in"}</p>
             </div>
 
             <nav className="sidebar-nav">
-              {/* Only Personal Info and Order History remain */}
               {[ 
                 { id: 'personal-information', name: 'Personal Information', icon: User },
                 { id: 'order-history', name: 'Order History', icon: ShoppingBag }

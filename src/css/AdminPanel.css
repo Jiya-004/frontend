@@ -401,3 +401,119 @@
   background: rgba(230, 57, 70, 0.1);
   color: #ffffff;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --primary-color: #c493f8;
+  --light-bg: #f9f6ff;
+  --white: #ffffff;
+  --text-color: #333;
+  --card-shadow: 0 4px 10px rgba(200, 160, 255, 0.25);
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--light-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.admin-panel-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 20px 40px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(180, 120, 255, 0.3);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.icon-wrapper {
+  background: var(--light-bg);
+  padding: 12px;
+  border-radius: 50%;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.stat-card p {
+  margin: 5px 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.messages-section {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: var(--card-shadow);
+}
+
+.messages-section h3 {
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.messages-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.messages-section li {
+  background: var(--light-bg);
+  margin-bottom: 12px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+.no-messages {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
