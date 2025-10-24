@@ -15,6 +15,8 @@ import Admindashboard from "./admin/dashboard";
 import Product from "./admin/product";
 import Inventory from "./admin/Inventory";
 import Sidebar from "./admin/Sidebar";
+import NewOrders from "./admin/NewOrders";        // <-- IMPORT NEW ORDERS
+import OrderHistory from "./admin/OrderHistory";  // <-- IMPORT ORDER HISTORY
 import "./axiosConfig";
 
 // --- Layout wrappers ---
@@ -45,7 +47,7 @@ function AppContent() {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const isAdminPage = location.pathname.startsWith("/admin");
+  // const isAdminPage = location.pathname.startsWith("/admin"); // Not used but useful for context
 
   return (
     <Routes>
@@ -87,7 +89,7 @@ function AppContent() {
         element={<UserLayout><Account /></UserLayout>}
       />
 
-      {/* --- Admin routes --- */}
+      {/* --------------------------- --- Admin routes --- --------------------------- */}
       <Route
         path="/admin/dashboard"
         element={
@@ -112,6 +114,25 @@ function AppContent() {
           </AdminLayout>
         }
       />
+      
+      {/* --- NEW ORDER ROUTES --- */}
+      <Route
+        path="/admin/new-orders"
+        element={
+          <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+            <NewOrders />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="/admin/order-history"
+        element={
+          <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+            <OrderHistory />
+          </AdminLayout>
+        }
+      />
+      {/* ---------------------------------------------------------------------------- */}
     </Routes>
   );
 }
