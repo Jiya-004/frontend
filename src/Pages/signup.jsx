@@ -2,24 +2,50 @@ import { useState } from "react";
 import api from "../api/api";
 import "../css/Signup.css";
 
-function signup() {
+function Signup() {
   const [form, setForm] = useState({
     name: "",
+    username: "",
     email: "",
+    phone: "",
+    gender: "",
+    dob: "",
+    address: "",
     password: "",
-    role: "user", // default role
+    confirmPassword: "",
+    role: "user",
   });
+
   const [message, setMessage] = useState("");
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      setMessage("Passwords do not match!");
+      return;
+    }
+
     try {
       const res = await api.post("/register", form);
-      setMessage(res.data.message);
-      setForm({ name: "", email: "", password: "", role: "user" });
+      setMessage(res.data.message || "Registered successfully!");
+      setForm({
+        name: "",
+        username: "",
+        email: "",
+        phone: "",
+        gender: "",
+        dob: "",
+        address: "",
+        password: "",
+        confirmPassword: "",
+        role: "user",
+      });
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
     }
@@ -28,25 +54,75 @@ function signup() {
   return (
     <div className="signup-page-wrapper">
       <div className="signup-card">
-        <h2>Sign Up</h2>
-        {message && <p>{message}</p>}
+        <h2>Create an Account</h2>
+        {message && <p className="message">{message}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Full Name"
             value={form.name}
             onChange={handleChange}
             required
           />
+
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            required
+          />
+
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={form.email}
             onChange={handleChange}
             required
           />
+
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+          />
+
+          <select
+            name="gender"
+            value={form.gender}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+
+          <input
+            type="date"
+            name="dob"
+            value={form.dob}
+            onChange={handleChange}
+            required
+          />
+
+          <textarea
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+            rows="3"
+            required
+          ></textarea>
+
+
           <input
             type="password"
             name="password"
@@ -56,7 +132,15 @@ function signup() {
             required
           />
 
-          {/* Role dropdown */}
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+
           <select
             name="role"
             value={form.role}
@@ -67,11 +151,11 @@ function signup() {
             <option value="admin">Admin</option>
           </select>
 
-          <button type="submit">Register</button>
+          <button type="submit">Sign Up</button>
         </form>
       </div>
     </div>
   );
 }
 
-export default signup;
+export default Signup;

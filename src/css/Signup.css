@@ -69,7 +69,7 @@
 
 /* Styling for both input and select elements */
 .signup-card input,
-.signup-card select { 
+.signup-card select,.signup-card textarea { 
     background-color: var(--input-bg);
     border: 1px solid #ddd;
     padding: 12px 15px;
