@@ -1,21 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { setAuthToken } from "../axiosConfig"; 
-import { useAuth } from "../hooks/useAuth"; // ⬅️ IMPORT THE HOOK
+import { useAuth } from "../hooks/useAuth"; 
 import "../css/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // ⬅️ GET THE LOGIN FUNCTION
+  const { login } = useAuth(); 
   
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  // Use state to handle error/success messages
   const [message, setMessage] = useState("");
+  const [msgType, setMsgType] = useState(""); // 'success' or 'error'
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,27 +23,25 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-    
+
     try {
       const res = await axios.post("http://127.0.0.1:8080/api/login", form);
-      
-      const { user, token, message } = res.data; 
-      
-      // ✅ Use the centralized 'login' function
-      login(token, user); 
+      const { user, token, message } = res.data;
+
+      login(token, user);
 
       setMessage(message);
+      setMsgType("success");
 
-      // ✅ Redirect based on role
       if (user.role === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/home");
       }
     } catch (error) {
-      // Check for the specific 401 response error message from the backend
       const errorMessage = error.response?.data?.message || "An unexpected error occurred.";
       setMessage(errorMessage);
+      setMsgType("error");
     }
   };
 
@@ -52,8 +49,8 @@ export default function Login() {
     <div className="login-page-wrapper">
       <div className="login-card">
         <h2>Login</h2>
-        {/* Use a class to style the error message differently */}
-        {message && <p className={`status-message ${message.includes('Invalid') ? 'error' : ''}`}>{message}</p>}
+
+        {message && <p className={`status-message ${msgType}`}>{message}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -77,19 +74,18 @@ export default function Login() {
               required
             />
           </div>
-          
+
           <a href="#" className="forgot-password">
             Forgot password?
           </a>
 
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => navigate("/signup")}
-          >
-            Don't have an account? Sign up
-          </button>
-
+         <button
+  type="button"
+  className="link-button underline-link"
+  onClick={() => navigate("/signup")}
+>
+  Don't have an account? Sign up
+</button>
           <button type="submit" className="submit-button">
             Sign In
           </button>

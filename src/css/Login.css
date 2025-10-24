@@ -133,3 +133,22 @@
 .submit-button:active {
     transform: scale(0.99);
 }
+.status-message {
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* Red = error, Green = success */
+.status-message.error {
+    color: #ff4d4f;
+}
+
+.status-message.success {
+    color: #28a745;
+}
+
+/* Underline link for Signup redirect */
+.underline-link {
+    text-decoration: underline;
+}
