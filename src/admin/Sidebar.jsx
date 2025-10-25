@@ -143,8 +143,8 @@ export default function Sidebar({ isCollapsed, toggleSidebar }) {
           {openMenus.customers && (
             <div className="submenu">
               <Link
-                to="/admin/customers/segments"
-                className={`nav-sub-item ${isActive("/admin/customers/segments") ? "nav-item-active" : ""}`}
+                to="/admin/customer"
+                className={`nav-sub-item ${isActive("/admin/customer") ? "nav-item-active" : ""}`}
               >
                 <span>Segments</span>
               </Link>

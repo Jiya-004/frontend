@@ -141,7 +141,6 @@ const styles = `
 export default function AddProduct() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
 
@@ -151,7 +150,6 @@ export default function AddProduct() {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("price", price);
-    formData.append("quantity", quantity);
     if (image) formData.append("image", image);
 
     try {
@@ -161,7 +159,6 @@ export default function AddProduct() {
       setMessage("✅ Product added successfully!");
       setName("");
       setPrice("");
-      setQuantity("");
       setImage(null);
     } catch (error) {
       console.error("Error submitting product:", error);
@@ -212,19 +209,6 @@ export default function AddProduct() {
               className="form-input"
               placeholder="Enter price"
               step="0.01"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Quantity</label>
-            <input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              className="form-input"
-              placeholder="Enter quantity"
-              min="0"
               required
             />
           </div>

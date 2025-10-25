@@ -9,7 +9,6 @@ export default function Inventory() {
   const [editingProduct, setEditingProduct] = useState(null); // Product being edited
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState("");
-  const [editQuantity, setEditQuantity] = useState("");
 
   // Fetch products
   useEffect(() => {
@@ -46,17 +45,16 @@ export default function Inventory() {
     setEditingProduct(product);
     setEditName(product.name);
     setEditPrice(product.price);
-    setEditQuantity(product.quantity);
   };
 
   // Save edits
   const handleEditSave = async () => {
-    if (!editName || !editPrice || !editQuantity) return alert("Please fill in all fields.");
+    if (!editName || !editPrice) return alert("Please fill in all fields.");
 
     try {
       const res = await axios.put(
         `http://localhost:8080/api/products/${editingProduct.id}`,
-        { name: editName, price: editPrice, quantity: editQuantity }
+        { name: editName, price: editPrice }
       );
 
       // Update product in state
@@ -90,7 +88,6 @@ export default function Inventory() {
               <th>Image</th>
               <th>Product Name</th>
               <th>Price</th>
-              <th>Quantity</th>
               <th>Added At</th>
               <th>Actions</th>
             </tr>
@@ -112,11 +109,6 @@ export default function Inventory() {
                 </td>
                 <td>{product.name}</td>
                 <td>RS.{parseFloat(product.price).toFixed(2)}</td>
-                <td>
-                  <span className={`quantity-badge ${product.quantity < 10 ? 'low-stock' : ''}`}>
-                    {product.quantity}
-                  </span>
-                </td>
                 <td>
                   {product.created_at
                     ? new Date(product.created_at).toLocaleDateString()
@@ -163,15 +155,6 @@ export default function Inventory() {
                 type="number"
                 value={editPrice}
                 onChange={(e) => setEditPrice(e.target.value)}
-              />
-            </label>
-            <label>
-              Quantity:
-              <input
-                type="number"
-                value={editQuantity}
-                onChange={(e) => setEditQuantity(e.target.value)}
-                min="0"
               />
             </label>
             <div className="modal-actions">

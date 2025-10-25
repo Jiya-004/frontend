@@ -517,3 +517,79 @@ body {
   color: #666;
   font-style: italic;
 }
+/* Messages Section Styling */
+.messages-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.messages-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #333;
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message-card {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 16px;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.message-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.message-header strong {
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.message-email {
+  color: #6c757d;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.message-text {
+  color: #495057;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+  font-size: 15px;
+}
+
+.message-date {
+  color: #868e96;
+  font-size: 12px;
+  display: block;
+}
+
+.no-messages {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+  font-style: italic;
+}

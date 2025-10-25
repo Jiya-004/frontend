@@ -17,6 +17,7 @@ import Inventory from "./admin/Inventory";
 import Sidebar from "./admin/Sidebar";
 import NewOrders from "./admin/NewOrders";        // <-- IMPORT NEW ORDERS
 import OrderHistory from "./admin/OrderHistory";  // <-- IMPORT ORDER HISTORY
+import Customer from "./admin/Customer";  // Add this line
 import "./axiosConfig";
 
 // --- Layout wrappers ---
@@ -132,6 +133,16 @@ function AppContent() {
           </AdminLayout>
         }
       />
+      {/* --- Customer route --- */}
+<Route
+  path="/admin/customer"
+  element={
+    <AdminLayout isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)}>
+      <Customer />
+    </AdminLayout>
+  }
+/>
+      
       {/* ---------------------------------------------------------------------------- */}
     </Routes>
   );
