@@ -162,6 +162,8 @@ export default function AddProduct() {
       setImage(null);
     } catch (error) {
       console.error("Error submitting product:", error);
+       console.error('Validation errors:', error.response?.data); // Add this line
+  console.error('Error details:', error.response?.data?.errors); // Add this line
       // Added error handling for network issues
       if (error.code === 'ERR_NETWORK') {
         setMessage("❌ Network error: Could not connect to the API server (http://localhost:8080).");
